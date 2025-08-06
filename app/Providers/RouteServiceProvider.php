@@ -7,19 +7,27 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 
 class RouteServiceProvider extends ServiceProvider
 {
+    /**
+     * Register the routes for the application.
+     */
     public function boot(): void
     {
-        parent::boot();
-
         $this->routes(function () {
+
+            // ✅ Default web user routes
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
 
-            // Admin routes
-            Route::middleware('web')
-                ->prefix('admin')
-                ->name('admin.')
-                ->group(base_path('routes/admin.php'));
+            // ✅ API routes (jika digunakan)
+            Route::prefix('api')
+                ->middleware('api')
+                ->group(base_path('routes/api.php'));
+
+            // ✅ Admin routes - guna prefix /admin dan name prefix admin.
+            Route::middleware('web') // gunakan middleware web
+                ->prefix('admin')     // URL akan bermula dengan /admin
+                ->name('admin.')     // Nama route akan bermula dengan admin.
+                ->group(base_path('routes/admin.php')); // Fail route khusus admin
         });
     }
 }
