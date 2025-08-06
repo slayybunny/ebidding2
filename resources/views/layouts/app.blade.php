@@ -18,22 +18,9 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-
-         html, body {
-        overflow: hidden;
-    }
-    main {
-        height: 100vh;
-        overflow-y: auto;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-    main::-webkit-scrollbar {
-        display: none;
-    }
     </style>
 </head>
-<body class="bg-gray-100 text-[#4B3621]">
+<body class="bg-[#fafbfc] text-[#4B3621]">
 
     <div class="flex min-h-screen overflow-hidden">
         {{-- Sidebar ikut role --}}
@@ -43,13 +30,6 @@
             @include('layouts.sidebar')
         @endif
 
-        <main class="flex-1 hide-scrollbar overflow-y-auto">
-            <div class="flex justify-center px-4 py-10">
-                <div class="w-full max-w-6xl">
-                    @yield('content')
-                </div>
-            </div>
-        </main>
     </div>
 
 </body>

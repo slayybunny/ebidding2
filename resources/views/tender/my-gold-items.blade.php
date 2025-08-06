@@ -3,7 +3,7 @@
 @section('page-title', 'MY GOLD ITEMS')
 
 @section('content')
-<div class="container-fluid py-5">
+<div class="py-5">
     <div class="max-w-6xl mx-auto px-4">
 
     <div class="container">
@@ -21,7 +21,7 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle text-center">
+           <table class="table table-bordered table-hover align-middle text-center w-full table-fixed">
                 <thead class="table-light">
                     <tr>
                         <th>Item</th>
