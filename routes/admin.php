@@ -12,52 +12,49 @@ use App\Http\Controllers\admin\PaymentRecordController;
 use App\Http\Controllers\admin\ProfitReportController;
 use App\Http\Controllers\admin\RulesManualController;
 
+Route::middleware('guest:admin')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+    Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
+});
 
-// LOGIN
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// REGISTER
-Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
+Route::middleware('auth:admin')->group(function () {
+    Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
 
-// DASHBOARD
-Route::get('/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware('auth:admin')->name('dashboard');
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::get('/profile/edit', [ProfileController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-// PROFILE
-Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
-Route::get('/profile/edit', [ProfileController::class, 'editProfile'])->name('profile.edit');
-Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    // Manage Users
+    Route::get('/manage-users', [ManageUsersController::class, 'index'])->name('manage_users');
 
-// MANAGE USERS
-Route::get('/manage-users', [ManageUsersController::class, 'index'])->name('manage_users');
+    // Bidding Platform
+    Route::get('/bidding', [BiddingPlatformController::class, 'index'])->name('bidding.index');
+    Route::get('/bidding/create', [BiddingPlatformController::class, 'create'])->name('bidding.create');
+    Route::post('/bidding', [BiddingPlatformController::class, 'store'])->name('bidding.store');
+    Route::get('/bidding/{id}', [BiddingPlatformController::class, 'show'])->name('bidding.show');
+    Route::get('/bidding/{id}/edit', [BiddingPlatformController::class, 'edit'])->name('bidding.edit');
+    Route::put('/bidding/{id}', [BiddingPlatformController::class, 'update'])->name('bidding.update');
 
-// BIDDING PLATFORM
-Route::get('/bidding', [BiddingPlatformController::class, 'index'])->name('bidding.index');
-Route::get('/bidding/create', [BiddingPlatformController::class, 'create'])->name('bidding.create');
-Route::post('/bidding', [BiddingPlatformController::class, 'store'])->name('bidding.store');
-Route::get('/bidding/{id}', [BiddingPlatformController::class, 'show'])->name('bidding.show');
-Route::get('/bidding/{id}/edit', [BiddingPlatformController::class, 'edit'])->name('bidding.edit');
-Route::put('/bidding/{id}', [BiddingPlatformController::class, 'update'])->name('bidding.update');
+    // Bidding History
+    Route::get('/bidding-history', [BiddingHistoryController::class, 'index'])->name('bidding-history.index');
 
-// BIDDING HISTORY
-Route::get('/bidding-history', [BiddingHistoryController::class, 'index'])->name('bidding-history.index');
-
-// BIDDING STATUS
-
+    // Bidding Status
     Route::get('/bidding-status', [BiddingStatusController::class, 'index'])->name('bidding-status.index');
-    Route::get('/bidding-status/{id}', [BiddingStatusController::class, 'show'])->name('admin.bidding-status.show');
-    Route::post('/bidding-status/{id}/update', [BiddingStatusController::class, 'update'])->name('admin.bidding-status.update');
+    Route::get('/bidding-status/{id}', [BiddingStatusController::class, 'show'])->name('bidding-status.show');
+    Route::post('/bidding-status/{id}/update', [BiddingStatusController::class, 'update'])->name('bidding-status.update');
 
-//USER MANUAL
-Route::get('/rules-manual', [RulesManualController::class, 'index'])->name('admin.rules.manual');
+    // Rules Manual
+    Route::get('/rules-manual', [RulesManualController::class, 'index'])->name('rules.manual');
 
-//PAYMENT RECORDS
-Route::get('/payments/records', [PaymentRecordController::class, 'index'])->name('payments.index');
-Route::get('/payments/records/{id}/receipt', [PaymentRecordController::class, 'showReceipt'])->name('payments.receipt');
+    // Payment Records
+    Route::get('/payments/records', [PaymentRecordController::class, 'index'])->name('payments.index');
+    Route::get('/payments/records/{id}/receipt', [PaymentRecordController::class, 'showReceipt'])->name('payments.receipt');
 
-//PROFIT REPORTS
-Route::get('/profit-report', [ProfitReportController::class, 'index'])->name('profit.report');
+    // Profit Reports
+    Route::get('/profit-report', [ProfitReportController::class, 'index'])->name('profit.report');
+});
