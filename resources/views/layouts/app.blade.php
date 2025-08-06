@@ -9,20 +9,39 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        .hide-scrollbar::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
-        .hide-scrollbar {
+        main {
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        main::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+<<<<<<< HEAD
+=======
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+>>>>>>> 6283141c451aaacdf4814cc2d39054f0a4af5382
     </style>
 </head>
 <body class="bg-[#fafbfc] text-[#4B3621]">
 
-    <div class="flex min-h-screen overflow-hidden">
+    <div class="flex min-h-screen w-full">
         {{-- Sidebar ikut role --}}
         @if (session('active_role') === 'tender')
             @include('layouts.sidebar-tender')
@@ -30,6 +49,14 @@
             @include('layouts.sidebar')
         @endif
 
+<<<<<<< HEAD
+=======
+        <main class="flex-1 flex items-center justify-center overflow-y-auto overflow-x-hidden">
+            <div class="w-full max-w-7xl px-4 py-10">
+                @yield('content')
+            </div>
+        </main>
+>>>>>>> 6283141c451aaacdf4814cc2d39054f0a4af5382
     </div>
 
 </body>

@@ -3,12 +3,15 @@
 @section('page-title', 'CREATE LISTING')
 
 @section('content')
-<div class="min-h-screen bg-[#fafbfc] py-10 px-4">
-    <div class="max-w-5xl mx-auto px-4">
+<div class="min-h-screen bg-[#fafbfc] px-6 py-10">
+    <div class="ml-[260px] mr-auto max-w-[calc(100vw-300px)] bg-white shadow-lg rounded-lg p-6">
+
         <!-- Compact Header -->
         <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-lg mb-3 shadow-sm">
-                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-lg mb-3 shadow-sm">
+        <svg class="w-6 h-6 text-[#FFD700]" fill="currentColor" viewBox="0 0 20 20">
+
+
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>
@@ -58,11 +61,11 @@
                 </h2>
             </div>
 
-            <form action="{{ route('store-listing') }}" method="POST" enctype="multipart/form-data" class="p-6">
+            <form action="{{ route('store-listing') }}" method="POST" enctype="multipart/form-data" class="p-6 max-w-6xl mx-auto">
                 @csrf
 
                 <!-- Grid Layout for Form Fields -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 max-w-4xl mx-auto">
                     <!-- Item Name -->
                     <div class="lg:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Item Name *</label>
@@ -176,8 +179,9 @@
 
                 <!-- Submit Button -->
                 <div class="border-t border-gray-200 pt-4">
-                    <button type="submit"
-                        class="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-semibold py-3 px-6 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 flex items-center justify-center space-x-2">
+                <button type="submit"
+    class="w-full bg-[#af812c] hover:bg-[#6c757d] text-white font-semibold py-3 px-6 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#FFD700] focus:ring-offset-2 flex items-center justify-center space-x-2">
+
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                         </svg>
@@ -222,6 +226,17 @@ textarea::-webkit-scrollbar-thumb {
 
 textarea::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
+}
+/* Buang scroll horizontal */
+html, body {
+    overflow-x: hidden;
+}
+
+/* Override margin-left dari sidebar untuk elak content ditolak */
+@media (min-width: 1024px) {
+    .lg\:ml-64 {
+        margin-left: 0 !important;
+    }
 }
 </style>
 @endsection

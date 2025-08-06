@@ -24,7 +24,9 @@
             <div class="bg-white rounded shadow-sm p-4">
                 <!-- Avatar & Name -->
                 <div class="text-center mb-4">
-                    <img src="{{ $profileUrl }}" class="avatar" alt="Profile Picture">
+                    <div class="profile-img-wrapper mx-auto mb-3">
+                        <img src="{{ $profileUrl }}" class="avatar" alt="Profile Picture" onerror="this.onerror=null;this.src='{{ asset('images/defaultprofile.jpg') }}';">
+                    </div>
                     <h5 class="mt-3">{{ $admin->first_name }} {{ $admin->last_name }}</h5>
                     <p class="text-muted">{{ ucfirst($admin->role) }}</p>
                 </div>
@@ -70,11 +72,12 @@
     .avatar {
         width: 140px;
         height: 140px;
-        object-fit: cover;
         border-radius: 50%;
-        aspect-ratio: 1 / 1;
+        object-fit: cover;
         border: 4px solid #fff;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        background-color: #f0f0f0;
+        aspect-ratio: 1 / 1;
     }
 
     .form-control.bg-light {
