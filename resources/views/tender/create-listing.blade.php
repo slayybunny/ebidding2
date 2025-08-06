@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('page-title', 'Create Listing')
+@section('page-title', 'CREATE LISTING')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 py-6">
+<div class="min-h-screen bg-[#fafbfc] py-10 px-4">
     <div class="max-w-5xl mx-auto px-4">
         <!-- Compact Header -->
         <div class="text-center mb-6">

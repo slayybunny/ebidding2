@@ -13,30 +13,31 @@ class LoginController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'category' => 'required|in:WARGANEGARA MALAYSIA,BUKAN WARGANEGARA',
-            'mykad' => 'required_without:passport|nullable|digits:12|regex:/^[0-9]+$/',
-            'passport' => 'required_without:mykad|nullable|max:9|regex:/^[a-zA-Z0-9]+$/',
-            'password' => 'required',
-            // 'g-recaptcha-response' => 'required|captcha',
-        ]);
+{
+    $credentials = $request->validate([
+        'category' => 'required|in:WARGANEGARA MALAYSIA,BUKAN WARGANEGARA',
+        'mykad' => 'required_without:passport|nullable|digits:12|regex:/^[0-9]+$/',
+        'passport' => 'required_without:mykad|nullable|max:9|regex:/^[a-zA-Z0-9]+$/',
+        'password' => 'required',
+    ]);
 
-        $loginField = $request->category === 'WARGANEGARA MALAYSIA' ? 'mykad' : 'passport';
+    $loginField = $request->category === 'WARGANEGARA MALAYSIA' ? 'mykad' : 'passport';
 
-        if (Auth::attempt([$loginField => $request->$loginField, 'password' => $request->password])) {
-            $request->session()->regenerate();
-            return redirect('/')->with('success', 'Login successful.');
-        }
-
-        return back()->withErrors([
-            'login' => 'The provided credentials do not match our records.',
-        ]);
+    // ✅ Guna guard 'web' secara eksplisit
+    if (Auth::guard('web')->attempt([$loginField => $request->$loginField, 'password' => $request->password])) {
+        $request->session()->regenerate();
+        return redirect('/')->with('success', 'Login successful.');
     }
+
+    return back()->withErrors([
+        'login' => 'The provided credentials do not match our records.',
+    ]);
+}
+
 
     public function logout(Request $request)
 {
-    Auth::logout();
+    Auth::guard('web')->logout();
 
     $request->session()->invalidate();
     $request->session()->regenerateToken();

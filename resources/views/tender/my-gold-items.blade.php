@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
-@section('page-title', 'My Gold Items')
+@section('page-title', 'MY GOLD ITEMS')
 
 @section('content')
 <div class="container-fluid py-5">
+    <div class="max-w-6xl mx-auto px-4">
+
     <div class="container">
 
         @if(session('success'))

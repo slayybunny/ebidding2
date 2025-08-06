@@ -391,7 +391,17 @@
                 <h4 class="page-title">@yield('page-title', 'USER DASHBOARD')</h4>
             </div>
             <div class="d-flex align-items-center">
-                <span class="me-3 welcome-user">WELCOME, {{ Auth::user()->name }}!</span>
+           @auth
+    <span class="me-3 welcome-user">
+        WELCOME, {{ Auth::user()->name }}
+    </span>
+@else
+    <span class="me-3 welcome-user">
+        WELCOME, Guest
+    </span>
+@endauth
+
+
                 <div class="user-avatar">
                     <i class="fas fa-user text-white"></i>
                 </div>
