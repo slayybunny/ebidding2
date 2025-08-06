@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * {
             margin: 0;
@@ -32,8 +33,8 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(184, 134, 11, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(161, 98, 7, 0.05) 0%, transparent 50%);
             pointer-events: none;
         }
 
@@ -58,7 +59,7 @@
         .sidebar-header {
             padding: 24px;
             border-bottom: 1px solid #e5e7eb;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #b8860b 0%, #cd853f 100%);
             color: white;
         }
 
@@ -91,17 +92,17 @@
 
         .sidebar .nav-link:hover {
             background: #f3f4f6;
-            color: #3b82f6;
+            color: #b8860b;
             transform: translateX(4px);
             border: 1px solid #e5e7eb;
         }
 
         .sidebar .nav-link.active {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #b8860b 0%, #cd853f 100%);
             color: white;
             transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-            border: 1px solid #3b82f6;
+            box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3);
+            border: 1px solid #b8860b;
         }
 
         .sidebar .nav-link.active .menu-icon {
@@ -168,18 +169,18 @@
         .admin-avatar {
             width: 44px;
             height: 44px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, #b8860b, #cd853f);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 4px 12px rgba(184, 134, 11, 0.2);
             transition: transform 0.3s ease;
         }
 
         .admin-avatar:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 6px 16px rgba(184, 134, 11, 0.3);
         }
 
         .main-content {
@@ -201,7 +202,7 @@
 
         .nav-link:hover .menu-icon {
             transform: scale(1.1);
-            color: #3b82f6;
+            color: #b8860b;
         }
 
         .nav-link.active .menu-icon {
@@ -219,7 +220,7 @@
         }
 
         .hamburger-btn:hover {
-            color: #3b82f6;
+            color: #b8860b;
             background: #f3f4f6;
         }
 
@@ -242,7 +243,7 @@
 
         .profile-cover {
             height: 180px;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
+            background: linear-gradient(135deg, #b8860b 0%, #cd853f 50%, #daa520 100%);
             position: relative;
             overflow: hidden;
         }
@@ -284,7 +285,7 @@
 
         .profile-avatar i {
             font-size: 3rem;
-            color: #3b82f6;
+            color: #b8860b;
         }
 
         .profile-info {
@@ -296,7 +297,7 @@
             position: absolute;
             top: 30px;
             right: 40px;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #b8860b 0%, #cd853f 100%);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -304,13 +305,13 @@
             font-weight: 600;
             font-size: 0.875rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3);
         }
 
         .edit-profile-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+            background: linear-gradient(135deg, #a0751a 0%, #b8860b 100%);
         }
 
         .profile-name {
@@ -318,7 +319,7 @@
             font-weight: 700;
             color: #1f2937;
             margin-bottom: 8px;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #b8860b 0%, #cd853f 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -358,7 +359,7 @@
 
         .section-title i {
             margin-right: 12px;
-            color: #3b82f6;
+            color: #b8860b;
             font-size: 1.25rem;
         }
 
@@ -385,7 +386,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(90deg, #b8860b, #cd853f);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -414,7 +415,7 @@
 
         .detail-label i {
             margin-right: 8px;
-            color: #3b82f6;
+            color: #b8860b;
             font-size: 1rem;
         }
 
@@ -561,7 +562,7 @@
         /* Button Focus States */
         .edit-profile-btn:focus,
         .logout-btn:focus {
-            outline: 2px solid #3b82f6;
+            outline: 2px solid #b8860b;
             outline-offset: 2px;
         }
     </style>
@@ -596,30 +597,39 @@
             </div>
             <div class="sidebar-content">
                 <nav class="nav flex-column pt-3">
-                    <a class="nav-link" href="{{ route('admin.dashboard') }}">
-                        <i class="fas fa-home menu-icon"></i> Dashboard
-                    </a>
-                    <a class="nav-link" href="#users">
-                        <i class="fas fa-users menu-icon"></i> Manage Users
-                    </a>
-                    <a class="nav-link" href="#bidding">
-                        <i class="fas fa-gavel menu-icon"></i> Bidding Platform
-                    </a>
-                    <a class="nav-link" href="#history">
-                        <i class="fas fa-history menu-icon"></i> Bidding History
-                    </a>
-                    <a class="nav-link" href="#status">
-                        <i class="fas fa-chart-line menu-icon"></i> Bidding Status
-                    </a>
-                    <a class="nav-link" href="#rules">
-                        <i class="fas fa-book menu-icon"></i> Rules & User Manual
-                    </a>
-                    <a class="nav-link" href="#payment">
-                        <i class="fas fa-credit-card menu-icon"></i> Payment Records
-                    </a>
-                    <a class="nav-link" href="{{ route('admin.profile') }}">
-                        <i class="fas fa-user-circle menu-icon"></i> Profile
-                    </a>
+                <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+    <i class="fas fa-home menu-icon"></i> Dashboard
+</a>
+
+<a class="nav-link {{ request()->routeIs('admin.manage_users') ? 'active' : '' }}" href="{{ route('admin.manage_users') }}">
+    <i class="fas fa-users menu-icon"></i> Manage Users
+</a>
+
+<a class="nav-link {{ request()->routeIs('admin.bidding') ? 'active' : '' }}" href="{{ route('admin.bidding.index') }}">
+    <i class="fas fa-gavel menu-icon"></i> Bidding Platform
+</a>
+
+<a class="nav-link {{ request()->routeIs('admin.bidding-history.index') ? 'active' : '' }}" href="{{ route('admin.bidding-history.index') }}">
+    <i class="fas fa-history menu-icon"></i> Bidding History
+</a>
+
+<a class="nav-link {{ request()->routeIs('admin.bidding-status.index') ? 'active' : '' }}" href="{{ route('admin.bidding-status.index') }}">
+    <i class="fas fa-chart-line menu-icon"></i> Bidding Status
+</a>
+
+<a class="nav-link {{ request()->routeIs('admin.payments.index') ? 'active' : '' }}" href="{{ route('admin.payments.index') }}">
+    <i class="fas fa-credit-card menu-icon"></i> Payment Records
+</a>
+
+<a class="nav-link {{ request()->routeIs('admin.profit.report') ? 'active' : '' }}" href="{{ route('admin.profit.report') }}">
+    <i class="fas fa-chart-line menu-icon"></i> Profit Report
+</a>
+
+<a class="nav-link {{ request()->routeIs('admin.profile') ? 'active' : '' }}" href="{{ route('admin.profile') }}">
+    <i class="fas fa-user-circle menu-icon"></i> Profile
+</a>
+
+
                 </nav>
 
                 <!-- Logout Section -->
@@ -627,6 +637,10 @@
                     <button class="logout-btn" onclick="handleLogout()">
                         <i class="fas fa-sign-out-alt menu-icon"></i> Logout
                     </button>
+                
+                    <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
                 </div>
             </div>
         </div>
@@ -666,15 +680,23 @@
         }
 
         function handleLogout() {
-            if (confirm('Are you sure you want to logout?')) {
-                document.body.style.opacity = '0.5';
-                document.body.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => {
-                    alert('Logged out successfully!');
-                    document.body.style.opacity = '1';
-                }, 500);
-            }
+    Swal.fire({
+        title: 'Log Out?',
+        text: 'Are you sure you want to log out?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e3342f',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, log out',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('logout-form').submit();
         }
+    });
+}
+
 
         window.addEventListener('resize', function() {
             const sidebar = document.getElementById('sidebar');
@@ -722,6 +744,7 @@
             });
         });
     </script>
+    @yield('scripts')
 </body>
 
 </html>
