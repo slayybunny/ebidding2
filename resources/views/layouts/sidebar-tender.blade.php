@@ -16,29 +16,16 @@
         }
 
         .dashboard-container {
-            background: #f8fafc;
+            background: #fafbfc;
             min-height: 100vh;
             position: relative;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        .dashboard-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(184, 134, 11, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(161, 98, 7, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
         .sidebar {
-            background: white;
-            border-right: 1px solid #e5e7eb;
-            color: #374151;
+            background: #ffffff;
+            border-right: 1px solid #e1e5e9;
+            color: #495057;
             height: 100vh;
             padding: 0;
             position: fixed;
@@ -46,7 +33,7 @@
             left: 0;
             width: 280px;
             z-index: 1000;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
             overflow-y: auto;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
@@ -54,16 +41,17 @@
         }
 
         .sidebar-header {
-            padding: 24px;
-            border-bottom: 1px solid #e5e7eb;
-            background: linear-gradient(135deg, #b8860b 0%, #cd853f 100%);
+            padding: 28px 24px;
+            border-bottom: 1px solid #e1e5e9;
+            background: linear-gradient(135deg, #b8860b 0%, #daa520 100%);
             color: white;
         }
 
         .sidebar-header h4 {
-            font-weight: 700;
-            font-size: 1.25rem;
+            font-weight: 600;
+            font-size: 1.2rem;
             margin: 0;
+            letter-spacing: 0.5px;
         }
 
         .sidebar-content {
@@ -74,156 +62,168 @@
         }
 
         .sidebar .nav-link {
-            color: #6b7280;
-            padding: 16px 24px;
-            margin: 4px 16px;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #6c757d;
+            padding: 18px 24px;
+            margin: 2px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
             position: relative;
             font-weight: 500;
-            border: 1px solid transparent;
+            font-size: 0.95rem;
+            border: none;
             text-decoration: none;
             display: flex;
             align-items: center;
+            cursor: pointer;
         }
 
         .sidebar .nav-link:hover {
-            background: #f3f4f6;
+            background: #f8f9fa;
             color: #b8860b;
-            transform: translateX(4px);
-            border: 1px solid #e5e7eb;
+            border-left: 4px solid #b8860b;
+            padding-left: 20px;
         }
 
         .sidebar .nav-link.active {
-            background: linear-gradient(135deg, #b8860b 0%, #cd853f 100%);
-            color: white;
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3);
-            border: 1px solid #b8860b;
+            background: #f8f9fa;
+            color: #b8860b;
+            border-left: 4px solid #b8860b;
+            padding-left: 20px;
+            font-weight: 600;
         }
 
         .sidebar .nav-link.active .menu-icon {
-            color: white;
+            color: #b8860b;
         }
 
         .logout-section {
             margin-top: auto;
-            padding: 24px 16px 24px 16px;
-            border-top: 1px solid #e5e7eb;
+            padding: 20px 16px 28px 16px;
+            border-top: 1px solid #e1e5e9;
         }
 
         .logout-btn {
-            color: #dc2626;
+            color: #dc3545;
             padding: 16px 24px;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            transition: all 0.2s ease;
             font-weight: 500;
-            border: 1px solid transparent;
+            font-size: 0.95rem;
+            border: none;
             text-decoration: none;
             display: flex;
             align-items: center;
             width: 100%;
             background: transparent;
-            cursor: button;
+            cursor: pointer;
         }
 
         .logout-btn:hover {
-            background: #fef2f2;
-            color: #dc2626;
-            transform: translateX(4px);
-            border: 1px solid #fecaca;
-            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+            background: #f8f9fa;
+            color: #dc3545;
+            border-left: 4px solid #dc3545;
+            padding-left: 20px;
         }
 
         .logout-btn .menu-icon {
-            color: #dc2626;
-            font-size: 1.1rem;
+            color: #dc3545;
+            font-size: 1rem;
             margin-right: 12px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .top-navbar {
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            color: #1f2937;
+            background: #ffffff;
+            border-bottom: 1px solid #e1e5e9;
+            color: #b8860b;
             padding: 20px 32px;
             position: fixed;
             top: 0;
             left: 280px;
             right: 0;
             z-index: 999;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
             transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .top-navbar h4 {
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #1f2937;
-            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #b8860b;
+            font-size: 1.4rem;
+            margin: 0;
         }
 
         .user-avatar {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #b8860b, #cd853f);
-            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #b8860b, #daa520);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(184, 134, 11, 0.2);
-            transition: transform 0.3s ease;
+            box-shadow: 0 2px 8px rgba(184, 134, 11, 0.15);
+            transition: transform 0.2s ease;
         }
 
         .user-avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 16px rgba(184, 134, 11, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(184, 134, 11, 0.2);
         }
 
         .main-content {
             margin-left: 280px;
-            margin-top: 84px;
             padding: 32px;
+            padding-top: 100px;
+            background: #fafbfc;
+            min-height: 100vh;
+            z-index: 1;
             position: relative;
-            z-index: 5;
-            background: transparent;
             transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .menu-icon {
-            font-size: 1.1rem;
-            margin-right: 12px;
-            transition: all 0.3s ease;
-            color: #6b7280;
+            font-size: 1rem;
+            margin-right: 14px;
+            transition: all 0.2s ease;
+            color: #6c757d;
+            width: 18px;
+            text-align: center;
         }
 
         .nav-link:hover .menu-icon {
-            transform: scale(1.1);
             color: #b8860b;
         }
 
         .nav-link.active .menu-icon {
-            color: white;
+            color: #b8860b;
         }
 
         .hamburger-btn {
-            color: #4b5563;
+            color: #6c757d;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             padding: 8px;
-            border-radius: 8px;
+            border-radius: 6px;
             border: none;
             background: transparent;
+            font-size: 1.1rem;
         }
 
         .hamburger-btn:hover {
             color: #b8860b;
-            background: #f3f4f6;
+            background: #f8f9fa;
         }
 
         .welcome-user {
-            color: #4b5563;
-            font-weight: 600;
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
         }
 
         /* Submenu styles */
@@ -231,9 +231,10 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease;
-            background-color: #f9fafb;
-            border-radius: 8px;
-            margin: 4px 16px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            margin: 2px 16px;
+            border: 1px solid #e9ecef;
         }
 
         .submenu.open {
@@ -242,29 +243,35 @@
         }
 
         .submenu-link {
-            color: #6b7280;
-            padding: 12px 24px 12px 48px;
+            color: #6c757d;
+            padding: 14px 24px 14px 48px;
             display: flex;
             align-items: center;
             text-decoration: none;
             font-size: 0.9rem;
+            font-weight: 500;
             transition: all 0.2s ease;
         }
 
         .submenu-link:hover {
             color: #b8860b;
-            background-color: #f3f4f6;
+            background-color: #ffffff;
+            border-left: 3px solid #b8860b;
+            padding-left: 45px;
         }
 
         .submenu-link i {
-            margin-right: 8px;
-            font-size: 0.8rem;
+            margin-right: 10px;
+            font-size: 0.85rem;
+            width: 14px;
+            text-align: center;
         }
 
         .chevron-icon {
             margin-left: auto;
             transition: transform 0.3s ease;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            color: #adb5bd;
         }
 
         .chevron-icon.rotated {
@@ -273,34 +280,37 @@
 
         /* Role Switch */
         .role-switch {
-            padding: 16px;
-            border-bottom: 1px solid #e5e7eb;
+            padding: 20px 16px;
+            border-bottom: 1px solid #e1e5e9;
+            background: #f8f9fa;
         }
 
         .role-switch label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 0.8rem;
             font-weight: 600;
-            color: #6b7280;
+            color: #6c757d;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .role-switch select {
             width: 100%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
             background-color: white;
             font-size: 0.9rem;
-            color: #374151;
-            transition: all 0.3s ease;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
         .role-switch select:focus {
             outline: none;
             border-color: #b8860b;
-            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
+            box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.1);
         }
 
         /* Sidebar Toggle States */
@@ -323,10 +333,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.3);
             z-index: 999;
             display: none;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(1px);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -348,33 +358,97 @@
             .top-navbar {
                 left: 0;
                 padding: 16px 20px;
+                height: 65px;
             }
 
             .main-content {
                 margin-left: 0;
-                margin-top: 70px;
-                padding: 20px;
+                padding: 24px 20px;
+                padding-top: 85px;
             }
         }
 
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 6px;
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 20px 16px;
+                padding-top: 80px;
+            }
+
+            .top-navbar {
+                padding: 12px 16px;
+                height: 60px;
+            }
+
+            .top-navbar h4 {
+                font-size: 1.1rem;
+            }
+
+            .welcome-user {
+                font-size: 0.8rem;
+            }
+
+            .user-avatar {
+                width: 36px;
+                height: 36px;
+            }
         }
 
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+        /* Custom Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f3f5;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #ced4da;
+            border-radius: 2px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #adb5bd;
+        }
+
+        /* Card styling for main content */
+        .content-card {
+            background: white;
             border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            padding: 32px;
+            margin-bottom: 24px;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+        .page-header {
+            background: white;
             border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            padding: 24px 32px;
+            margin-bottom: 32px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .page-header h1 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: 0.3px;
         }
+
+        .page-header p {
+            color: #6c757d;
+            margin: 8px 0 0 0;
+            font-size: 1rem;
+        }
+
+         main, .main-content {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
     </style>
 </head>
 <body>
@@ -383,15 +457,15 @@
         <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
         <!-- Top Navigation -->
-        <div class="top-navbar d-flex justify-content-between align-items-center">
+        <div class="top-navbar">
             <div class="d-flex align-items-center">
                 <button class="hamburger-btn me-3" onclick="toggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h4 class="page-title">@yield('page-title', 'TENDER DASHBOARD')</h4>
+                <h4 class="page-title">@yield('page-title', 'TENDER MANAGEMENT SYSTEM')</h4>
             </div>
             <div class="d-flex align-items-center">
-                <span class="me-3 welcome-user">WELCOME, {{ Auth::user()->name }}!</span>
+                <span class="me-3 welcome-user">WELCOME, {{ Auth::user()->name }}</span>
                 <div class="user-avatar">
                     <i class="fas fa-user text-white"></i>
                 </div>
@@ -401,16 +475,16 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h4><i class="fas fa-gem me-2"></i>SGCC Tenders</h4>
+                <h4><i class="fas fa-building me-2"></i>SGCC TENDERS</h4>
             </div>
 
             <div class="role-switch">
                 <form method="POST" action="{{ route('switch.role') }}" id="role-switch-form">
                     @csrf
-                    <label for="role">Switch Mode</label>
+                    <label for="role">OPERATING MODE</label>
                     <select name="role" id="role" onchange="switchRole()" class="form-select">
                         <option value="user" {{ session('active_role') === 'user' ? 'selected' : '' }}>User Bidding</option>
-                        <option value="tender" {{ session('active_role') === 'tender' ? 'selected' : '' }}>Tenders</option>
+                        <option value="tender" {{ session('active_role') === 'tender' ? 'selected' : '' }}>Tender Management</option>
                     </select>
                 </form>
             </div>
@@ -428,37 +502,21 @@
                         <a href="{{ route('my-gold-items') }}" class="submenu-link">
                             <i class="fas fa-list"></i> My Gold Items
                         </a>
-                        @php
-                            $listing = \App\Models\Listing::where('member_id', Auth::id())->latest()->first();
-                        @endphp
-                        @if($listing)
-                        <a href="{{ route('listing-overview', ['slug' => $listing->slug]) }}" class="submenu-link">
-                            <i class="fas fa-eye"></i> Listing Overview
-                        </a>
-                        @endif
-                    </div>
+                    @php
+    $listing = \App\Models\Listing::where('member_id', Auth::id())->latest()->first();
+@endphp
 
-                    <div class="nav-link" onclick="toggleSubmenu('users-submenu')">
-                        <i class="fas fa-users menu-icon"></i> Users & Profiles
-                        <i class="fas fa-chevron-down chevron-icon" id="users-chevron"></i>
-                    </div>
-                    <div class="submenu" id="users-submenu">
-                        <a href="#" class="submenu-link">
-                            <i class="fas fa-user"></i> Account Profile
-                        </a>
-                        <a href="#" class="submenu-link">
-                            <i class="fas fa-heart"></i> Interested Bidders
-                        </a>
-                        <a href="#" class="submenu-link">
-                            <i class="fas fa-users"></i> User List
-                        </a>
+<a href="{{ $listing ? route('listing-overview', ['slug' => $listing->slug]) : '#' }}" class="submenu-link {{ $listing ? '' : 'disabled' }}" {{ $listing ? '' : 'style=pointer-events:none;opacity:0.5;' }}>
+    <i class="fas fa-eye"></i> Listing Overview
+</a>
+
                     </div>
                 </nav>
 
                 <!-- Logout Section -->
                 <div class="logout-section">
                     <button onclick="handleLogout()" class="logout-btn">
-                        <i class="fas fa-sign-out-alt menu-icon"></i> Logout
+                        <i class="fas fa-sign-out-alt menu-icon"></i> Sign Out
                     </button>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
@@ -466,12 +524,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            @yield('content')
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -529,15 +581,19 @@
 
         function handleLogout() {
             Swal.fire({
-                title: 'Log Out?',
-                text: 'Are you sure you want to log out?',
-                icon: 'warning',
+                title: 'Sign Out?',
+                text: 'Are you sure you want to sign out from the system?',
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#e3342f',
+                confirmButtonColor: '#2c3e50',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, log out',
+                confirmButtonText: 'Yes, sign out',
                 cancelButtonText: 'Cancel',
-                reverseButtons: true
+                reverseButtons: true,
+                customClass: {
+                    popup: 'custom-swal-popup',
+                    title: 'custom-swal-title'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('logout-form').submit();

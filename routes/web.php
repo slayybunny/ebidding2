@@ -66,8 +66,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/bidding/{slug}', [BiddingController::class, 'showBySlug'])->name('bidding.detail');  // for individual bidding detail
         Route::post('/bidding/place/{slug}', [BiddingController::class, 'placeBid'])->name('bidding.place');
 
-        // Inside the 'tender' prefix group
+       // routes/web.php
        Route::get('/listing/{slug}/overview', [ListingController::class, 'overview'])->name('listing-overview');
+
 
     });
 

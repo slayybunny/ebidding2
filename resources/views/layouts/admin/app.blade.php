@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -487,6 +488,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -562,9 +564,9 @@
             outline: 2px solid #3b82f6;
             outline-offset: 2px;
         }
-
     </style>
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Sidebar Overlay -->
@@ -629,7 +631,7 @@
             </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main-->
         <div class="main-content">
             @yield('content')
         </div>
@@ -721,4 +723,5 @@
         });
     </script>
 </body>
+
 </html>

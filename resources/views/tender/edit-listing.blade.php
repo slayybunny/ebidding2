@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page-title', 'Edit Listing')
+
 @section('content')
 <div class="min-h-screen bg-gray-50 flex flex-col">
     <div class="max-w-6xl mx-auto py-12 px-4">

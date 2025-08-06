@@ -75,28 +75,33 @@ class ListingController extends Controller
 
     // Show all gold items of the logged-in user, regardless of status
     public function myGoldItems()
-    {
-        // Ambil semua listings milik pengguna, tidak kira statusnya
-        $goldListings = Listing::where('member_id', Auth::id())->get();
+{
+    $goldListings = Listing::where('member_id', Auth::id())->get();
 
-        return view('tender.my-gold-items', compact('goldListings'));
-    }
+    return view('tender.my-gold-items', compact('goldListings'));
+}
+
+
 
     // Show the overview of a specific listing
-    public function overview()
+    // ListingController.php
+public function overview($slug)
 {
-    // Ambil semua listing yang ada status active atau unactive dan mempunyai bids
-    $listings = Listing::whereIn('status', ['active', 'unactive'])  // Status active atau unactive
-        ->with('bids')  // Pastikan bids juga diambil
-        ->get();
+    // Dapatkan listing berdasarkan slug
+    $listing = Listing::where('slug', $slug)->where('member_id', Auth::id())->first();
 
-    // Jika tiada listings, tampilkan mesej error
-    if ($listings->isEmpty()) {
-        return redirect()->route('my-gold-items')->with('error', 'No active or unactive listings found.');
+    // Kalau tiada listing ditemui
+    if (!$listing) {
+        return view('tender.listing-overview', [
+            'listing' => null,
+            'bids' => collect()
+        ]);
     }
 
-    // Return ke view dengan membawa data listings
-    return view('tender.listing-overview', compact('listings'));
+    // Dapatkan bids yang berkaitan
+    $bids = $listing->bids()->latest()->get();
+
+    return view('tender.listing-overview', compact('listing', 'bids'));
 }
 
 
