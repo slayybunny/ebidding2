@@ -35,3 +35,4 @@ class Admin extends Authenticatable
         $this->notify(new ResetPassword($token));
     }
 }
+

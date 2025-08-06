@@ -255,6 +255,21 @@
         .form-group select.filled + .icon {
             color: #28a745;
         }
+        #create-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    #create-btn.disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
     </style>
 </head>
 <body>
@@ -302,24 +317,26 @@
             </div>
 
             <div class="form-row">
-                <div class="form-group">
-                    <input type="password" name="password" placeholder="Password" required>
-                    <i class="fas fa-lock icon"></i>
-                    @error('password') <div class="error">{{ $message }}</div> @enderror
-                </div>
-                <div class="form-group">
-                    <input type="password" name="password_confirmation" placeholder="Confirm Password" required>
-                    <i class="fas fa-shield-alt icon"></i>
-                </div>
+            <!-- Password -->
+            <div class="form-group">
+                <input type="password" name="password" id="password" placeholder="Password" required>
+                <div id="password-help" style="margin-top: 5px; font-size: 13px; display: none;"></div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password" required>
+                <div id="confirm-password-help" style="margin-top: 5px; font-size: 13px; display: none;"></div>
+            </div>
+
+
             </div>
 
             <div class="form-group">
                 <select name="role" required>
                     <option value="">Select Role</option>
                     <option value="super_admin" {{ old('role') == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                    <option value="content_admin" {{ old('role') == 'content_admin' ? 'selected' : '' }}>Content Admin</option>
                     <option value="user_admin" {{ old('role') == 'user_admin' ? 'selected' : '' }}>User Admin</option>
-                    <option value="moderator" {{ old('role') == 'moderator' ? 'selected' : '' }}>Moderator</option>
                 </select>
                 <i class="fas fa-crown icon"></i>
                 @error('role') <div class="error">{{ $message }}</div> @enderror
@@ -344,69 +361,232 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.querySelector("form");
-        const termsCheckbox = document.getElementById("terms");
-        const submitBtn = document.querySelector(".btn");
+document.addEventListener("DOMContentLoaded", function () {
+    const passwordInput = document.getElementById("password");
+    const passwordHelp = document.getElementById("password-help");
+    const confirmPasswordInput = document.getElementById("password_confirmation");
+    const confirmPasswordHelp = document.getElementById("confirm-password-help");
 
-        // Prevent form submission if terms not checked
-        form.addEventListener("submit", function (e) {
-            if (!termsCheckbox.checked) {
-                e.preventDefault();
-                alert("You must agree to the Terms of Service and Privacy Policy.");
-                termsCheckbox.focus();
-                return;
-            }
+    // Password strength message
+    passwordInput.addEventListener("input", function () {
+        const value = this.value;
+        let msg = "";
 
-            // Add loading state
-            submitBtn.classList.add("loading");
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        });
+        const hasUpper = /[A-Z]/.test(value);
+        const hasLower = /[a-z]/.test(value);
+        const hasNumber = /[0-9]/.test(value);
+        const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(value);
 
-        // Input validation and styling
-        const inputs = document.querySelectorAll("input, select");
-        inputs.forEach(input => {
-            input.addEventListener("input", function() {
-                if (this.value.trim() !== "") {
-                    this.classList.add("filled");
-                } else {
-                    this.classList.remove("filled");
-                }
-            });
-
-            // Add focus animation
-            input.addEventListener("focus", function() {
-                this.parentElement.style.transform = "scale(1.02)";
-            });
-
-            input.addEventListener("blur", function() {
-                this.parentElement.style.transform = "scale(1)";
-            });
-        });
-
-        // Password strength indicator
-        const passwordInput = document.querySelector('input[name="password"]');
-        const confirmPasswordInput = document.querySelector('input[name="password_confirmation"]');
-
-        if (passwordInput && confirmPasswordInput) {
-            confirmPasswordInput.addEventListener("input", function() {
-                if (this.value !== passwordInput.value && this.value !== "") {
-                    this.style.borderColor = "#e53e3e";
-                } else if (this.value === passwordInput.value && this.value !== "") {
-                    this.style.borderColor = "#48bb78";
-                } else {
-                    this.style.borderColor = "#e2e8f0";
-                }
-            });
+        if (value.length < 8) {
+            msg = "Too short, minimum 8 characters";
+        } else if (!hasUpper || !hasLower || !hasNumber || !hasSymbol) {
+            msg = "Add uppercase, lowercase, number & symbol";
+        } else {
+            msg = "Strong password";
         }
 
-        // Smooth scroll to error
-        const firstError = document.querySelector('.error');
-        if (firstError) {
-            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+        passwordHelp.textContent = msg;
+        passwordHelp.style.color = msg === "Strong password" ? "#28a745" : "#dc3545";
+        passwordHelp.style.display = "block";
     });
+
+    passwordInput.addEventListener("focus", function () {
+        if (this.value !== "") passwordHelp.style.display = "block";
+    });
+
+    passwordInput.addEventListener("blur", function () {
+        passwordHelp.style.display = "none";
+    });
+
+    // Confirm password match
+    function checkConfirmPassword() {
+        const passwordValue = passwordInput.value;
+        const confirmValue = confirmPasswordInput.value;
+
+        if (confirmValue === "") {
+            confirmPasswordHelp.textContent = "Please re-enter your password";
+            confirmPasswordHelp.style.color = "#dc3545";
+        } else if (confirmValue !== passwordValue) {
+            confirmPasswordHelp.textContent = "Passwords do not match";
+            confirmPasswordHelp.style.color = "#dc3545";
+        } else {
+            confirmPasswordHelp.textContent = "Passwords match";
+            confirmPasswordHelp.style.color = "#28a745";
+        }
+
+        confirmPasswordHelp.style.display = "block";
+    }
+
+    confirmPasswordInput.addEventListener("input", checkConfirmPassword);
+    confirmPasswordInput.addEventListener("focus", checkConfirmPassword);
+    confirmPasswordInput.addEventListener("blur", function () {
+        confirmPasswordHelp.style.display = "none";
+    });
+});
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const emailInput = document.getElementById("email");
+    const emailHelp = document.getElementById("email-help");
+
+    function validateEmail() {
+        const value = emailInput.value;
+
+        if (value === "") {
+            emailHelp.style.display = "none";
+            return;
+        }
+
+        if (!value.includes("@")) {
+            emailHelp.textContent = "Please enter a valid email (must contain @)";
+            emailHelp.style.color = "#dc3545";
+            emailHelp.style.display = "block";
+        } else {
+            emailHelp.textContent = "Valid email format";
+            emailHelp.style.color = "#28a745";
+            emailHelp.style.display = "block";
+        }
+    }
+
+    emailInput.addEventListener("input", validateEmail);
+    emailInput.addEventListener("focus", validateEmail);
+    emailInput.addEventListener("blur", function () {
+        emailHelp.style.display = "none";
+    });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const emailInput = document.getElementById("email");
+    const emailHelp = document.getElementById("email-help");
+
+    const passwordInput = document.getElementById("password");
+    const passwordHelp = document.getElementById("password-help");
+
+    const confirmPasswordInput = document.getElementById("password_confirmation");
+    const confirmPasswordHelp = document.getElementById("confirm-password-help");
+
+    const agreeCheckbox = document.getElementById("agree");
+    const createBtn = document.getElementById("create-btn");
+
+    // Validate email
+    function validateEmail() {
+        const value = emailInput.value;
+        if (value === "") {
+            emailHelp.style.display = "none";
+            return false;
+        }
+        if (!value.includes("@")) {
+            emailHelp.textContent = "Please enter a valid email (must contain @)";
+            emailHelp.style.color = "#dc3545";
+            emailHelp.style.display = "block";
+            return false;
+        } else {
+            emailHelp.textContent = "Valid email format";
+            emailHelp.style.color = "#28a745";
+            emailHelp.style.display = "block";
+            return true;
+        }
+    }
+
+    // Validate password
+    function validatePassword() {
+        const value = passwordInput.value;
+        let msg = "";
+
+        const hasUpper = /[A-Z]/.test(value);
+        const hasLower = /[a-z]/.test(value);
+        const hasNumber = /[0-9]/.test(value);
+        const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+
+        if (value.length < 8) {
+            msg = "Too short, minimum 8 characters";
+        } else if (!hasUpper || !hasLower || !hasNumber || !hasSymbol) {
+            msg = "Add uppercase, lowercase, number & symbol";
+        } else {
+            msg = "Strong password";
+        }
+
+        passwordHelp.textContent = msg;
+        passwordHelp.style.color = msg === "Strong password" ? "#28a745" : "#dc3545";
+        passwordHelp.style.display = "block";
+
+        return msg === "Strong password";
+    }
+
+    // Validate confirm password
+    function validateConfirmPassword() {
+        const passwordValue = passwordInput.value;
+        const confirmValue = confirmPasswordInput.value;
+
+        if (confirmValue === "") {
+            confirmPasswordHelp.textContent = "Please re-enter your password";
+            confirmPasswordHelp.style.color = "#dc3545";
+        } else if (confirmValue !== passwordValue) {
+            confirmPasswordHelp.textContent = "Passwords do not match";
+            confirmPasswordHelp.style.color = "#dc3545";
+        } else {
+            confirmPasswordHelp.textContent = "Passwords match";
+            confirmPasswordHelp.style.color = "#28a745";
+        }
+
+        confirmPasswordHelp.style.display = "block";
+        return confirmValue === passwordValue && confirmValue !== "";
+    }
+
+    // Enable/disable button with style
+    function toggleCreateButton() {
+        const emailValid = validateEmail();
+        const passwordValid = validatePassword();
+        const confirmValid = validateConfirmPassword();
+        const checkboxChecked = agreeCheckbox.checked;
+
+        if (emailValid && passwordValid && confirmValid && checkboxChecked) {
+            createBtn.disabled = false;
+            createBtn.classList.remove("disabled");
+        } else {
+            createBtn.disabled = true;
+            createBtn.classList.add("disabled");
+        }
+    }
+
+    // Event listeners
+    emailInput.addEventListener("input", () => {
+        validateEmail();
+        toggleCreateButton();
+    });
+
+    passwordInput.addEventListener("input", () => {
+        validatePassword();
+        toggleCreateButton();
+    });
+
+    confirmPasswordInput.addEventListener("input", () => {
+        validateConfirmPassword();
+        toggleCreateButton();
+    });
+
+    agreeCheckbox.addEventListener("change", toggleCreateButton);
+
+    // Optional: hide helps on blur
+    [emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+        input.addEventListener("blur", () => {
+            const help = input.nextElementSibling;
+            help.style.display = "none";
+        });
+    });
+
+    // Optional: show helps on focus
+    [emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+        input.addEventListener("focus", () => {
+            const help = input.nextElementSibling;
+            if (input.value !== "") help.style.display = "block";
+        });
+    });
+});
+</script>
+
+
 
 </body>
 </html>

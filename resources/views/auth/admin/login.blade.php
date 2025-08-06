@@ -505,6 +505,21 @@
     background: #9ca3af;
     cursor: not-allowed;
 }
+.toggle-password {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #9ca3af;
+    font-size: 16px;
+    z-index: 2;
+}
+
+input:focus ~ .toggle-password {
+    color: #daa520;
+}
+
 
     </style>
 </head>
@@ -544,22 +559,25 @@
     @csrf
 
                     <div class="form-group">
-                        <input type="text" name="username" placeholder="Enter your username" required>
+                    <input type="email" name="email" id="email" required placeholder="Enter your email" />
                         <i class="fas fa-user icon"></i>
                         <div class="validation-message" id="username-msg"></div>
                     </div>
 
                     <div class="form-group">
-                        <input type="password" name="password" placeholder="Enter your password" required>
+                        <input type="password" name="password" id="password" placeholder="Enter your password" required>
                         <i class="fas fa-lock icon"></i>
+                        <i class="fas fa-eye toggle-password" toggle="password"></i>
                         <div class="validation-message" id="password-msg"></div>
                     </div>
 
                     <div class="form-group">
                         <input type="password" id="repassword" placeholder="Confirm your password" required>
                         <i class="fas fa-shield-alt icon"></i>
+                        <i class="fas fa-eye toggle-password" toggle="repassword"></i>
                         <div class="validation-message" id="repassword-msg"></div>
                     </div>
+
 
                     <div class="form-options">
                         <div class="remember-me">
@@ -745,6 +763,25 @@
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
             button.classList.add("loading");
             button.disabled = true;
+        });
+    });
+</script>
+<script>
+    // Toggle view/hide password
+    document.querySelectorAll(".toggle-password").forEach(icon => {
+        icon.addEventListener("click", function () {
+            const inputId = this.getAttribute("toggle");
+            const input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                this.classList.remove("fa-eye");
+                this.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                this.classList.remove("fa-eye-slash");
+                this.classList.add("fa-eye");
+            }
         });
     });
 </script>
