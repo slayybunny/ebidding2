@@ -34,4 +34,9 @@ class Bid extends Model
     {
         return $this->belongsTo(Listing::class, 'listing_id'); // Foreign key for the listing
     }
+    public function auction()
+{
+    return $this->belongsTo(Auction::class);
+}
+
 }

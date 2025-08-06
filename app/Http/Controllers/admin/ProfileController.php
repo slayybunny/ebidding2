@@ -36,8 +36,8 @@ class ProfileController extends Controller
             'email'         => 'required|email|max:255|unique:admins,email,' . $admin->id,
             'phone_number'  => 'nullable|string|max:20',
             'password'      => 'nullable|string|min:6|confirmed',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'current_profile_picture' => 'nullable|string'
+            'avatar'        => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'current_avatar' => 'nullable|string'
         ]);
 
         // Pastikan folder wujud
@@ -46,19 +46,19 @@ class ProfileController extends Controller
             File::makeDirectory($folder, 0755, true);
         }
 
-        // Handle profile picture
-        if ($request->hasFile('profile_picture')) {
-            if ($admin->profile_picture) {
-                $oldPath = str_replace('/storage/', '', $admin->profile_picture);
+        // Handle avatar (gambar profile)
+        if ($request->hasFile('avatar')) {
+            if ($admin->avatar) {
+                $oldPath = str_replace('/storage/', '', $admin->avatar);
                 if (Storage::disk('public')->exists($oldPath)) {
                     Storage::disk('public')->delete($oldPath);
                 }
             }
 
-            $newPath = $request->file('profile_picture')->store('avatars/admin', 'public');
-            $admin->profile_picture = '/storage/' . $newPath;
+            $newPath = $request->file('avatar')->store('avatars/admin', 'public');
+            $admin->avatar = '/storage/' . $newPath;
         } else {
-            $admin->profile_picture = $request->input('current_profile_picture');
+            $admin->avatar = $request->input('current_avatar');
         }
 
         // Update maklumat lain

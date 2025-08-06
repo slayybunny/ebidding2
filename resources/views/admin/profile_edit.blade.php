@@ -26,8 +26,8 @@
         <div class="row justify-content-center">
             <div class="col-md-8 text-center mb-4">
                 @php
-                    $profilePictureUrl = $admin->profile_picture && file_exists(public_path($admin->profile_picture))
-                        ? asset($admin->profile_picture)
+                    $profilePictureUrl = $admin->avatar && file_exists(public_path($admin->avatar))
+                        ? asset($admin->avatar)
                         : asset('images/default-avatar.png');
                 @endphp
 
@@ -38,11 +38,11 @@
                      onerror="this.src='{{ asset('images/default-avatar.png') }}';">
 
                 <div class="mt-2">
-                    <label for="profile_picture" style="cursor: pointer;" title="Change Profile Picture">
+                    <label for="avatar" style="cursor: pointer;" title="Change Profile Picture">
                         <i class="fas fa-pencil-alt fa-lg text-primary bg-white rounded-circle p-2 shadow-sm"></i>
                     </label>
-                    <input type="file" class="d-none" id="profile_picture" name="profile_picture" accept="image/*" onchange="previewProfilePicture(event)">
-                    <input type="hidden" name="current_profile_picture" value="{{ $admin->profile_picture }}">
+                    <input type="file" class="d-none" id="avatar" name="avatar" accept="image/*" onchange="previewProfilePicture(event)">
+                    <input type="hidden" name="current_profile_picture" value="{{ $admin->avatar }}">
                 </div>
             </div>
 
