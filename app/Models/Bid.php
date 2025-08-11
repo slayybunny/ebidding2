@@ -9,34 +9,30 @@ class Bid extends Model
 {
     use HasFactory;
 
-    // Nama jadual adalah 'bids'
     protected $table = 'bids';
 
     protected $fillable = [
-        'member_id', // ID of the member making the bid (ganti user_id dengan member_id)
-        'listing_id', // Foreign key for the listing
-        'bid_price', // The price offered in the bid
-        'status', // Status of the bid
+        'member_id',
+        'listing_id',
+        'bid_price',
+        'status',
     ];
 
-    /**
-     * Relationship with the Member model (the member who made the bid)
-     */
+    // Hubungan ke model Member
     public function member()
     {
-        return $this->belongsTo(Member::class, 'member_id');  // 'member_id' adalah kolum yang mengaitkan 'Bid' dengan 'Member'
+        return $this->belongsTo(Member::class, 'member_id');
     }
 
-    /**
-     * Relationship with the Listing model (if applicable)
-     */
+    // Hubungan ke model Listing
     public function listing()
     {
-        return $this->belongsTo(Listing::class, 'listing_id'); // Foreign key for the listing
+        return $this->belongsTo(Listing::class, 'listing_id');
     }
-    public function auction()
-{
-    return $this->belongsTo(Auction::class);
-}
 
+    // Hubungan ke model Auction (jika digunakan dalam sistem)
+    public function auction()
+    {
+        return $this->belongsTo(Auction::class);
+    }
 }

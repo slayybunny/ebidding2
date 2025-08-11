@@ -6,30 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        // Menambah foreign key pada 'member_id'
         Schema::table('bids', function (Blueprint $table) {
-            $table->foreignId('member_id')->constrained('members')->onDelete('cascade');
+            if (!Schema::hasColumn('bids', 'member_id')) {
+                $table->foreignId('member_id')->constrained('members')->onDelete('cascade');
+            }
+
+            if (Schema::hasColumn('bids', 'user_id')) {
+                $table->dropForeign(['user_id']);
+                $table->dropColumn('user_id');
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        // Jika migrasi perlu dibatalkan, buang foreign key pada 'member_id'
         Schema::table('bids', function (Blueprint $table) {
-            $table->dropForeign(['member_id']);
-            $table->dropColumn('member_id');
+            if (Schema::hasColumn('bids', 'member_id')) {
+                $table->dropForeign(['member_id']);
+                $table->dropColumn('member_id');
+            }
+            if (!Schema::hasColumn('bids', 'user_id')) {
+                $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            }
         });
     }
 };

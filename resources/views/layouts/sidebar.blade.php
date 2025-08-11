@@ -510,12 +510,6 @@
     <button class="hamburger-btn" onclick="toggleSidebar()" id="hamburger-btn">
         <i class="fas fa-bars" id="hamburger-icon"></i>
     </button>
-
-    <!-- Main Content -->
-    <div class="main-content" id="main-content">
-        @yield('content')
-    </div>
-
     <script>
         let sidebarCollapsed = false;
 

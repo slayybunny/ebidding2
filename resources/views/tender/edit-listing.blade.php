@@ -1,11 +1,8 @@
 @extends('layouts.app')
 
-@section('page-title', 'Edit Listing')
-
 @section('content')
-<div class="min-h-screen bg-gray-50 flex items-center justify-center">
-  <div class="w-full max-w-5xl bg-white p-6 rounded-xl shadow-md">
-
+<div class="min-h-screen bg-gray-50 flex flex-col">
+    <div class="max-w-6xl mx-auto py-12 px-4">
         <!-- Header Section -->
         <div class="text-center mb-12">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mb-4 shadow-lg">

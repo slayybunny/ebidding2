@@ -1,166 +1,134 @@
 @extends('layouts.app')
 
 @section('content')
-@php
-    use Carbon\Carbon;
-    $endTime = Carbon::parse($listing->date)->addMinutes($listing->duration);
-@endphp
+<div class="container mx-auto py-10">
+    <h1 class="text-3xl font-bold mb-6 text-yellow-600">Bidding Details</h1>
 
-<div class="max-w-3xl mx-auto py-10">
-    <h2 class="text-2xl font-bold mb-6">GOLD BIDDING</h2>
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    {{-- Listing Info --}}
-    <div class="border border-yellow-400 rounded-lg p-6 mb-6">
-        <div class="flex flex-col md:flex-row items-center">
-            <img src="{{ asset('storage/' . $listing->image) }}" class="w-32 h-32 object-cover mb-4 md:mb-0 md:mr-6" />
-            <div class="flex-1 space-y-2 w-full">
+            <!-- Left Column: Details -->
+            <div class="space-y-3">
                 <p><strong>Item:</strong> {{ $listing->item }}</p>
                 <p><strong>Type:</strong> {{ $listing->type }}</p>
-                <p><strong>Price:</strong> {{ $listing->currency }} {{ number_format($listing->price, 2) }}</p>
+                <p><strong>Price:</strong> RM {{ number_format($listing->price, 2) }}</p>
+                <p><strong>Starting Price:</strong> RM {{ number_format($listing->starting_price, 2) }}</p>
+                <p><strong>Date:</strong> {{ $listing->date }}</p>
+
+                @php
+                    $start = $listing->created_at;
+                    $end = $start->copy()->addMinutes($listing->duration);
+                    $now = now();
+                    $isActive = $now->lt($end);
+
+                    $d = floor($listing->duration / 1440);
+                    $h = floor(($listing->duration % 1440) / 60);
+                    $m = $listing->duration % 60;
+                @endphp
+
+                <p><strong>Duration:</strong> {{ $d }}d {{ $h }}h {{ $m }}m</p>
+                <p><strong>Currency:</strong> {{ $listing->currency }}</p>
+                <p><strong>Info:</strong> {{ $listing->info }}</p>
+                <p><strong>Status:</strong>
+                    <span class="{{ $isActive ? 'text-green-600' : 'text-red-600' }}">
+                        {{ $isActive ? 'Active' : 'Unactive' }}
+                    </span>
+                </p>
+
+                <p><strong>Start Date:</strong> {{ $start->format('Y-m-d H:i:s') }}</p>
+                <p><strong>Ends At:</strong> {{ $end->format('Y-m-d H:i:s') }}</p>
+
+                <input type="hidden" id="endTime" value="{{ $end->toIso8601String() }}">
+                <p><strong>Live Duration Remaining:</strong>
+                    <span id="countdown" class="font-semibold text-yellow-600">Loading...</span>
+                </p>
+            </div>
+
+            <!-- Right Column: Image & Form -->
+            <div class="space-y-6">
+                <!-- Image -->
+                @if ($listing->image)
+                    <img src="{{ asset($listing->image) }}" alt="Listing Image" class="w-full rounded-lg shadow">
+                @else
+                    <div class="text-gray-500 italic">No image available</div>
+                @endif
+
+                <!-- Place Bid Form -->
+                @php
+                    $userAlreadyBid = $listing->bids()->where('member_id', auth()->id())->exists();
+                @endphp
+
+                @if ($isActive)
+                    @if ($userAlreadyBid)
+                        <div class="text-green-700 font-semibold">
+                            You have already placed a bid for this item.
+                        </div>
+                    @else
+                        <form id="bidForm"
+                              action="{{ route('bidding.place', $listing->slug) }}"
+                              method="POST"
+                              class="space-y-3"
+                              onsubmit="return confirmBid(event)">
+                            @csrf
+                            <label for="bid_amount" class="block font-semibold">
+                                Your Bid ({{ $listing->currency }}):
+                            </label>
+                            <input type="number" name="bid_amount" step="0.01"
+                                   min="{{ $listing->starting_price }}" required
+                                   class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-yellow-500">
+                            <button type="submit"
+                                class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                                Place Bid
+                            </button>
+                        </form>
+                    @endif
+                @else
+                    <div class="text-red-600 font-semibold">Bidding for this item has ended.</div>
+                @endif
             </div>
         </div>
     </div>
-
-    {{-- Bidding Section --}}
-    <div class="border border-yellow-400 rounded-lg p-6 mb-6 space-y-3">
-        <p><strong>Starting Price:</strong> {{ $listing->currency }} {{ number_format($listing->starting_price, 2) }}</p>
-        <p><strong>Start Date:</strong> {{ Carbon::parse($listing->date)->format('Y-m-d H:i:s') }}</p>
-        <p><strong>Ends At:</strong> {{ $endTime->format('Y-m-d H:i:s') }}</p>
-
-        <p class="flex justify-between items-center">
-            <span class="flex items-center gap-2">
-                <svg id="clock-icon" class="w-5 h-5 text-yellow-500 transform transition-transform duration-300"
-                     fill="none" stroke="currentColor" stroke-width="2"
-                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <strong>Live Duration Remaining:</strong>
-            </span>
-            <span class="text-right font-semibold text-red-600">
-                <span id="duration-left">Loading...</span>
-                (<span id="duration-clock">00:00:00</span>)
-            </span>
-        </p>
-
-        <p><strong>Status:</strong> <span id="status-text" class="font-semibold">Calculating...</span></p>
-
-        {{-- Form to place bid --}}
-        <div id="bid-form-container">
-            <p><strong>Place Your Bid:</strong></p>
-            <form action="{{ route('bidding.place', $listing->slug) }}" method="POST" class="mt-2 flex" id="bid-form">
-                @csrf
-                <input type="number" name="bid_amount" id="bid-amount" class="border px-4 py-2 w-full rounded-l" placeholder="Enter bid amount" required>
-                <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700" id="confirm-bid-btn">Place Bid</button>
-            </form>
-        </div>
-
-        <p id="bid-closed" class="text-red-500 font-semibold mt-4 hidden">Bidding has ended.</p>
-    </div>
-
-     {{-- Description Row --}}
-<div class="border border-yellow-400 rounded-lg p-6 mb-6 space-y-3">
-    <label class="block text-sm font-semibold text-yellow-500 mb-2">Description & Information *</label>
-    <div class="border p-4 rounded-md">
-        <p class="whitespace-pre-line">{!! $listing->info ?: 'No description available' !!}</p>
-    </div>
 </div>
+@endsection
 
-
-    {{-- Modal for confirmation --}}
-    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h4 class="text-xl font-bold">Confirm Your Bid</h4>
-            <p class="mt-2">Are you sure you want to place a bid of <span id="modal-bid-amount"></span>?</p>
-            <div class="mt-4 flex justify-between">
-                <button id="confirm-modal-btn" class="bg-green-600 text-white px-4 py-2 rounded">Confirm</button>
-                <button id="close-modal-btn" class="bg-gray-600 text-white px-4 py-2 rounded">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-{{-- Countdown Script --}}
+@push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const endTime = new Date("{{ $endTime->format('Y-m-d H:i:s') }}").getTime();
-        const durationDisplay = document.getElementById('duration-left');
-        const clockDisplay = document.getElementById('duration-clock');
-        const statusText = document.getElementById('status-text');
-        const bidForm = document.getElementById('bid-form-container');
-        const bidClosed = document.getElementById('bid-closed');
-        const clockIcon = document.getElementById('clock-icon');
-        const startingPrice = parseFloat("{{ $listing->starting_price }}"); // Starting price
-        let rotateDeg = 0;
-
+    document.addEventListener("DOMContentLoaded", function () {
         function updateCountdown() {
-            const now = new Date().getTime();
-            let diff = Math.floor((endTime - now) / 1000);
+            const countdownEl = document.getElementById('countdown');
+            const endTimeInput = document.getElementById('endTime');
 
-            if (diff <= 0) {
-                durationDisplay.textContent = "0s";
-                clockDisplay.textContent = "00:00:00";
-                statusText.textContent = "Ended";
-                statusText.classList.remove('text-green-600');
-                statusText.classList.add('text-red-600');
-                bidForm.classList.add('hidden');
-                bidClosed.classList.remove('hidden');
-                clockIcon.style.transform = "rotate(0deg)";
+            if (!countdownEl || !endTimeInput) return;
+
+            const endTime = new Date(endTimeInput.value).getTime();
+            const now = new Date().getTime();
+            const distance = endTime - now;
+
+            if (distance <= 0) {
+                countdownEl.textContent = "Bidding ended";
                 return;
             }
 
-            let days = Math.floor(diff / 86400);
-            let hours = Math.floor((diff % 86400) / 3600);
-            let minutes = Math.floor((diff % 3600) / 60);
-            let seconds = diff % 60;
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            durationDisplay.textContent =
-                (days > 0 ? days + "d " : "") +
-                (hours > 0 ? hours + "h " : "") +
-                (minutes > 0 ? minutes + "m " : "") +
-                seconds + "s";
-
-            let totalHours = Math.floor(diff / 3600);
-            let mm = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
-            let ss = String(diff % 60).padStart(2, '0');
-            clockDisplay.textContent = totalHours + ":" + mm + ":" + ss;
-
-            statusText.textContent = "Active";
-            statusText.classList.add('text-green-600');
-            statusText.classList.remove('text-red-600');
-
-            rotateDeg += 6;
-            clockIcon.style.transform = `rotate(${rotateDeg}deg)`;
+            countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
         }
 
         updateCountdown();
         setInterval(updateCountdown, 1000);
-
-        // Open confirmation modal
-        document.getElementById('confirm-bid-btn').addEventListener('click', function() {
-            const bidAmount = parseFloat(document.getElementById('bid-amount').value);
-
-            // Check if bid is lower than starting price
-            if (bidAmount < startingPrice) {
-                alert("Bid amount must be at least the starting price of RM " + startingPrice.toFixed(2));
-                return; // Prevent modal from showing
-            }
-
-            document.getElementById('modal-bid-amount').textContent = "RM " + bidAmount.toFixed(2);
-            document.getElementById('confirmation-modal').classList.remove('hidden');
-        });
-
-        // Close modal
-        document.getElementById('close-modal-btn').addEventListener('click', function() {
-            document.getElementById('confirmation-modal').classList.add('hidden');
-        });
-
-        // Confirm bid and submit form
-        document.getElementById('confirm-modal-btn').addEventListener('click', function() {
-            document.getElementById('bid-form').submit();
-        });
     });
-</script>
 
-@endsection
+    function confirmBid(e) {
+        e.preventDefault(); // Stop form submission first
+
+        if (confirm("Are you sure you want to place this bid?")) {
+            e.target.submit(); // If Yes, submit form
+        } else {
+            return false; // If No, do nothing
+        }
+    }
+</script>
+@endpush

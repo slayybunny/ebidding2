@@ -82,18 +82,14 @@ class BiddingController extends Controller
     /**
      * Show bidding history (for completed bids)
      */
-    public function history()
+     public function history()
     {
-        $userId = Auth::id();
+        $bids = Bid::where('member_id', Auth::id())
+                     ->with(['listing', 'member'])
+                     ->orderByDesc('created_at')
+                     ->get();
 
-        // Get all listings that have ended and where the user has placed a bid
-        $listings = Listing::where('status', 'unactive')
-            ->whereHas('bids', function ($query) use ($userId) {
-                $query->where('member_id', $userId); // Ensure the user has placed a bid
-            })
-            ->get();
-
-        return view('history', compact('listings'));
+        return view('history', compact('bids'));
     }
 
     /**

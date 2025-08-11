@@ -13,13 +13,15 @@
         @endif
 
         <!-- Profile Info Centered -->
-        <div class="flex flex-col items-center mb-6">
-            <div class="w-28 h-28 rounded-full border-4 border-yellow-500 overflow-hidden">
-                <img src="{{ $member->photo ? asset('storage/' . $member->photo) : 'https://via.placeholder.com/150' }}" alt="Profile" class="w-full h-full object-cover">
-            </div>
-            <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ $member->name }}</h2>
-            <p class="text-sm text-gray-500 uppercase">{{ $member->category }}</p>
-        </div>
+<div class="flex flex-col items-center mb-6">
+    <div class="w-28 h-28 rounded-full border-4 border-yellow-500 overflow-hidden">
+        <img src="{{ $member->photo ? asset('storage/' . $member->photo) : asset('images/main.jpg') }}"
+             alt="" class="w-full h-full object-cover">
+    </div>
+    <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ $member->name }}</h2>
+    <p class="text-sm text-gray-500 uppercase">{{ $member->category }}</p>
+</div>
+
 
         <!-- Upload / Delete Buttons -->
         <div class="flex justify-center items-center mb-6 gap-4">
