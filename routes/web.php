@@ -5,10 +5,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Listing;
 use App\Http\Controllers\{
-    HomeController, LoginController, RegisterController,
+    HomeController, LoginController, RegisterController, WinnerTransactionController,
     ProfileController, OtpController, ForgotPasswordController,
     ChangePasswordController, BiddingController,
-    TenderController, RoleSwitchController, ListingController
+    TenderController, RoleSwitchController, ListingController, ToyyibpayController,
 };
 
 // LANDING PAGE
@@ -63,13 +63,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/delete-listing/{slug}', [ListingController::class, 'destroy'])->name('delete-listing');
 
         // BIDDING PAGES
-        Route::get('/bidding/{slug}', [BiddingController::class, 'showBySlug'])->name('bidding.detail');  // for individual bidding detail
-        Route::post('/bidding/place/{slug}', [BiddingController::class, 'placeBid'])->name('bidding.place');
+        Route::get('/bidding/{slug}', [BiddingController::class, 'showBySlug'])->name('bidding.detail');  // individual bidding page
+        Route::post('/bidding/place/{slug}', [BiddingController::class, 'placeBid'])->name('bidding.place'); // ✅ fixed route name
 
-       // routes/web.php
-       Route::get('/listing/{slug}/overview', [ListingController::class, 'overview'])->name('listing-overview');
-
-
+        // LISTING OVERVIEW
+        Route::get('/listing/{slug}/overview', [ListingController::class, 'overview'])->name('listing-overview');
     });
 
     // LIVE BIDDING
@@ -77,15 +75,23 @@ Route::middleware('auth')->group(function () {
 
     // BIDDING HISTORY
     Route::get('/history', [BiddingController::class, 'history'])->name('bidding.history');
-    Route::get('/status', [BiddingController::class, 'showBiddingStatus'])->name('bidding.status');
+    Route::get('/status', [ListingController::class, 'status'])->middleware('auth')->name('status');
+    Route::get('/winner', [ListingController::class, 'winner'])->name('winners');
 });
 
+Route::get('/payment/create/{id}', [ToyyibpayController::class, 'create'])->name('payment.create');
+Route::get('/status', [ToyyibpayController::class, 'paymentStatus'])->name('payment.status');
+Route::post('/payment/callback', [ToyyibpayController::class, 'callback'])->name('payment.callback');
+Route::get('/payment/redirect/{bidId}', [ToyyibpayController::class, 'redirectAfterPayment'])->name('payment.redirect');
+Route::get('/payment/receipt/{id}', [ToyyibpayController::class, 'receipt'])->name('payment.receipt');
+
+// CANCEL BID
 Route::delete('/bids/{bidId}/cancel', [BiddingController::class, 'cancel'])->name('bid.cancel');
 
+// SWITCH ROLE
 Route::post('/switch-role', [RoleSwitchController::class, 'switchRole'])->name('switch.role');
 
-
-// Generate slug for listings without one
+// GENERATE SLUG (if missing)
 Route::get('/generate-slug', function () {
     $listings = Listing::whereNull('slug')->get();
 
@@ -96,3 +102,12 @@ Route::get('/generate-slug', function () {
 
     return 'All slugs have been generated!';
 });
+
+Route::get('/tender/winner-transactions', [WinnerTransactionController::class, 'index'])
+    ->name('winner.transactions')
+    ->middleware('auth');
+
+
+
+
+

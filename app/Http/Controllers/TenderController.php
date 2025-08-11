@@ -38,4 +38,15 @@ class TenderController extends Controller
 
         abort(404);
     }
+
+    public function winnerTransactions()
+{
+    $transactions = \App\Models\Bid::with('listing')
+        ->where('member_id', auth()->id())
+        ->where('status', 'winner')
+        ->get();
+
+    return view('tender.winner-transactions', compact('transactions'));
+}
+
 }

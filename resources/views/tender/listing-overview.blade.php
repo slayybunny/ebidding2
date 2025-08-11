@@ -1,87 +1,138 @@
 @extends('layouts.app')
 
-@section('page-title', 'LISTING OVERVIEW')
-
 @section('content')
-<div class="min-h-screen flex justify-center items-start bg-gray-100 py-10 px-4">
-    <div class="w-full" style="max-width: 900px; margin-left: auto; margin-right: auto;">
-        <!-- HEADER -->
-        <div class="text-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-900">Listing Overview</h1>
-            <p class="text-gray-600">Manage and monitor your auction listing and bids</p>
-        </div>
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Listing Overview</h1>
+        <p class="text-gray-600">Manage and monitor your auction listings and bids</p>
+    </div>
 
-        @if(!isset($listing))
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Listing Not Found</h3>
-                <p class="text-gray-500">The listing could not be found or does not exist.</p>
-            </div>
-        @else
-            <!-- CARD -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <!-- Listing Info -->
-                <div class="flex items-center justify-between border-b pb-4 mb-4">
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-900">{{ $listing->item }}</h2>
-                        <p class="text-sm text-gray-600 mt-1">{{ $listing->date }}</p>
-                    </div>
-                    <div>
-                        <span class="inline-block px-3 py-1 text-sm rounded-full
-                            @if($listing->status === 'active') bg-green-100 text-green-800
-                            @elseif($listing->status === 'closed') bg-gray-100 text-gray-800
-                            @elseif($listing->status === 'pending') bg-yellow-100 text-yellow-800
-                            @else bg-blue-100 text-blue-800
-                            @endif">
-                            {{ ucfirst($listing->status) }}
-                        </span>
+    @if(isset($listing))
+        @php
+            $startTime = \Carbon\Carbon::parse($listing->date);
+            $endTime = $startTime->copy()->addMinutes($listing->duration);
+            $now = now();
+
+            $isExpired = $now->greaterThanOrEqualTo($endTime);
+            $liveStatus = $isExpired ? 'Ended' : 'Active';
+        @endphp
+
+        <div class="space-y-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-900">{{ $listing->item }}</h2>
+                            <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                                <span>Status:
+                                    <span class="font-medium text-{{ $liveStatus == 'Active' ? 'green' : 'red' }}-600">
+                                        {{ $liveStatus }}
+                                    </span>
+                                </span>
+                                @if (!$isExpired)
+                                    <div id="countdown-timer" class="flex items-center">
+                                        <span class="mr-1">Time Left:</span>
+                                        <span class="font-semibold text-gray-800" data-end-time="{{ $endTime->toIso8601String() }}"></span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <span class="text-2xl font-bold text-gray-900">{{ $listing->currency }} {{ number_format($listing->starting_price, 2) }}</span>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Bids -->
-                @if($listing->bids->count())
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Bidders List</h3>
-                    <div class="space-y-3">
-                        @foreach($listing->bids->sortByDesc('bid_price') as $bid)
-                            @php
-                                $isWinner = false;
-                                if ($listing->status === 'closed' && now()->greaterThanOrEqualTo($listing->end_time)) {
-                                    $isWinner = ($bid->bid_price === $listing->bids->max('bid_price'));
-                                }
-                            @endphp
-                            <div class="flex justify-between items-center p-4 rounded-lg
-                                @if($isWinner) bg-green-50 border border-green-200
-                                @else bg-gray-50 border border-gray-200
-                                @endif">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-700 font-bold">
-                                        {{ strtoupper(substr(optional($bid->member)->name, 0, 2)) }}
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-900">{{ $bid->member->name ?? 'No Name' }}</p>
-                                        <p class="text-xs text-gray-500">
-                                            @if($listing->status === 'closed' && now()->greaterThanOrEqualTo($listing->end_time))
-                                                {{ $isWinner ? 'Winner' : 'Lose' }}
-                                            @else
-                                                Bidding in Progress
-                                            @endif
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-lg font-bold text-gray-900">RM{{ number_format($bid->bid_price, 2) }}</p>
-                                </div>
-                            </div>
-                        @endforeach
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-8">
+                        <div class="flex-shrink-0 w-full md:w-1/3">
+                            <img src="{{ asset('storage/' . $listing->image) }}" alt="{{ $listing->item }}" class="w-full h-auto object-cover rounded-md shadow-sm">
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-semibold text-gray-900">Description</h3>
+                            <p class="text-gray-600 mt-2">{{ $listing->info }}</p>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Bids</h3>
+                @if($bids->isEmpty())
+                    <p class="text-gray-500">No bids have been placed yet.</p>
                 @else
-                    <!-- No Bids -->
-                    <div class="text-center py-8 text-gray-500 text-sm">
-                        No bids have been placed yet.
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member ID</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bid Price</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach($bids as $bid)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $bid->member_id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $listing->currency }} {{ number_format($bid->bid_price, 2) }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            @if($isExpired)
+                                                @if($bid->status === 'winner') bg-green-100 text-green-800
+                                                @elseif($bid->status === 'lose') bg-red-100 text-red-800
+                                                @else bg-gray-100 text-gray-800
+                                                @endif
+                                            @else
+                                                bg-yellow-100 text-yellow-800
+                                            @endif">
+                                            @if($isExpired)
+                                                @if($bid->status === 'winner') Winner
+                                                @elseif($bid->status === 'lose') Lose
+                                                @else Pending
+                                                @endif
+                                            @else
+                                                Active
+                                            @endif
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $bid->created_at->format('d M Y, H:i:s') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 @endif
             </div>
-        @endif
-    </div>
+        </div>
+    @else
+        <p>No listing found.</p>
+    @endif
 </div>
-@endsection
 
+<script>
+    function updateCountdown() {
+        const timers = document.querySelectorAll('[data-end-time]');
+        timers.forEach(timer => {
+            const endTime = new Date(timer.dataset.endTime);
+            const now = new Date();
+            const timeLeft = endTime - now;
+
+            if (timeLeft > 0) {
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                timer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                timer.textContent = 'Ended';
+                // Reload halaman untuk memperbarui status
+                window.location.reload();
+            }
+        });
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+</script>
+@endsection

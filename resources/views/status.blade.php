@@ -1,82 +1,86 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8 max-w-6xl">
-    <!-- Page Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Bidding Status</h1>
-        <p class="text-gray-600">Lihat status bidaan anda dan siapa yang menang.</p>
-    </div>
+<div class="max-w-6xl mx-auto py-10">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Bidding Status</h2>
 
-    <!-- Check if there are any bids -->
-    @if($bids->isEmpty())  <!-- Check if there are no bids -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No Bids Yet</h3>
-            <p class="text-gray-500">Tiada bidaan pada senarai ini.</p>
+    {{-- Mesej berjaya --}}
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 p-4 rounded mb-4">
+            ✅ {{ session('success') }}
+            <a href="{{ route('payment.status') }}" class="ml-4 text-blue-600 underline">⬅ Back to Status</a>
         </div>
+    @endif
+
+    {{-- Mesej gagal --}}
+    @if(session('error'))
+        <div class="bg-red-100 text-red-800 p-4 rounded mb-4">
+            ❌ {{ session('error') }}
+            <a href="{{ route('payment.status') }}" class="ml-4 text-blue-600 underline">⬅ Back to Status</a>
+        </div>
+    @endif
+
+    @if($listings->isEmpty())
+        <div class="text-gray-600">You have no bidding history.</div>
     @else
-        <!-- Display Bids -->
-        <div class="space-y-6">
-            @foreach($bids as $bid)
-                @php
-                    // Determine if bidding has closed and assign status
-                    $isWinner = false;
-                    if ($bid->listing->status === 'closed' && now()->greaterThanOrEqualTo($bid->listing->end_time)) {
-                        // Determine if this bid is the highest
-                        $isWinner = ($bid->bid_price === $bid->listing->bids->max('bid_price'));
-                    }
-                @endphp
+        @foreach($listings as $listing)
+            <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">{{ $listing->item }}</h3>
+                        <p class="text-sm text-gray-500">{{ $listing->type }}</p>
+                        <p class="text-sm text-gray-500">
+                            Ended: {{ \Carbon\Carbon::parse($listing->date)->addMinutes($listing->duration)->format('d M Y h:i A') }}
+                        </p>
+                    </div>
+                    <div class="mt-4 md:mt-0 text-right">
+                        @php
+                            $userBid = $listing->bids
+                                ->where('member_id', auth()->id())
+                                ->sortByDesc('bid_price')
+                                ->first();
+                        @endphp
 
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center justify-between
-                    @if($isWinner)
-                        border-green-200 bg-green-50
-                    @else
-                        border-gray-200 bg-gray-50
-                    @endif
-                ">
-                    <!-- Item Info -->
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
-                            <span class="text-sm font-medium text-gray-700">
-                                {{ strtoupper(substr(optional($bid->member)->name, 0, 2)) }}  <!-- First 2 letters of name -->
-                            </span>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-900">
-                                {{ $bid->listing->item }}  <!-- Item title (name) -->
-                            </p>
+                        @if($userBid)
+                            @if($userBid->status === 'winner')
+                                <span class="inline-block bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                    🏆 Winner
+                                </span>
 
-                            <!-- Display Winner/Loser status -->
-                            @if($bid->listing->status === 'closed' && now()->greaterThanOrEqualTo($bid->listing->end_time))
-                                @if($isWinner)
-                                    <p class="text-xs text-green-600">Winner</p>
-                                @else
-                                    <p class="text-xs text-red-600">Lose</p>
+                                {{-- Jika belum bayar --}}
+                                @if(isset($listing->is_paid) && !$listing->is_paid)
+                                    <div class="mt-2">
+                                        <a href="{{ route('payment.create', $listing->id) }}"
+                                        class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded">
+                                            💰 Pay Now (RM {{ number_format($userBid->bid_price, 2) }})
+                                        </a>
+                                    </div>
+                            {{-- Jika sudah bayar --}}
+                            @elseif(isset($listing->is_paid) && $listing->is_paid)
+                                <div class="mt-2 text-green-700 font-semibold">
+                                    ✅ Successfully Paid
+                                </div>
+
+                                {{-- Jika pembayaran gagal --}}
+                                @elseif(isset($listing->is_paid) && $listing->is_paid === false && isset($listing->payment_attempted))
+                                    <div class="mt-2 text-red-700 font-semibold">
+                                        ❌ Unsuccessful Payment
+                                    </div>
                                 @endif
+
+                            @elseif($userBid->status === 'lose')
+                                <span class="inline-block bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                    ❌ Lose
+                                </span>
                             @else
-                                <p class="text-xs text-gray-600">Bidding in Progress</p>
+                                <span class="inline-block bg-yellow-100 text-yellow-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                    ⏳ Pending
+                                </span>
                             @endif
-                        </div>
-                    </div>
-
-                    <!-- Bid Amount -->
-                    <div class="text-right">
-                        <p class="text-lg font-bold text-gray-900">RM{{ number_format($bid->bid_price, 2) }}</p>
-                    </div>
-                 <!-- Add Cancel Button outside the item box -->
-                        @if($bid->listing->status === 'active')
-                            <div class="text-right mt-4">
-                               <form action="{{ route('bid.cancel', $bid->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel your bid?');">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none">
-        Cancel Bid
-    </button>
-</form>
-
-                            </div>
                         @else
-                            <p class="text-xs text-gray-600">This bid cannot be cancelled as the auction is closed.</p>
+                            <span class="inline-block bg-gray-100 text-gray-800 text-sm font-semibold px-3 py-1 rounded-full">
+                                No bid placed
+                            </span>
                         @endif
                     </div>
                 </div>
