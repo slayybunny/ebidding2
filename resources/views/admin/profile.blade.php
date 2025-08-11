@@ -4,10 +4,10 @@
 
 @section('content')
 @php
-    $profilePicture = $admin->profile_picture;
-    $profilePath = public_path($profilePicture);
-    $profileUrl = (!empty($profilePicture) && file_exists($profilePath))
-        ? asset($profilePicture)
+    $avatar = $admin->avatar;
+    $avatarPath = public_path('storage/avatars/admin/' . $avatar);
+    $profileUrl = (!empty($avatar) && file_exists($avatarPath))
+        ? asset('storage/avatars/admin/' . $avatar)
         : asset('images/defaultprofile.jpg');
 @endphp
 
@@ -25,7 +25,7 @@
                 <!-- Avatar & Name -->
                 <div class="text-center mb-4">
                     <div class="profile-img-wrapper mx-auto mb-3">
-                        <img src="{{ $profileUrl }}" class="avatar" alt="Profile Picture" onerror="this.onerror=null;this.src='{{ asset('images/defaultprofile.jpg') }}';">
+                        <img src="{{ $profileUrl }}" class="avatar" alt="Profile Picture">
                     </div>
                     <h5 class="mt-3">{{ $admin->first_name }} {{ $admin->last_name }}</h5>
                     <p class="text-muted">{{ ucfirst($admin->role) }}</p>
@@ -77,7 +77,8 @@
         border: 4px solid #fff;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         background-color: #f0f0f0;
-        aspect-ratio: 1 / 1;
+        display: block;
+        margin: 0 auto;
     }
 
     .form-control.bg-light {

@@ -544,6 +544,9 @@
         }
     </style>
 </head>
+@extends('layouts.admin.app')
+
+@section('page-title', 'Dashboard')
 <body>
     <div class="dashboard-container">
         <!-- Sidebar Overlay -->
@@ -564,52 +567,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h4><i class="fas fa-chart-line me-2"></i>Admin Panel</h4>
-            </div>
-            <div class="sidebar-content">
-                <nav class="nav flex-column pt-3">
-                    <a class="nav-link active" href="{{ route('admin.dashboard') }}">
-                        <i class="fas fa-home menu-icon"></i> Dashboard
-                    </a>
-                    <a class="nav-link" href="{{ route('admin.manage_users') }}">
-                        <i class="fas fa-users menu-icon"></i> Manage Users
-                    </a>
-                    <a class="nav-link" href="{{ route('admin.bidding.index') }}">
-                        <i class="fas fa-gavel menu-icon"></i> Bidding Platform
-                    </a>
-                    <a class="nav-link" href="{{ route('admin.bidding-history.index') }}">
-                        <i class="fas fa-history menu-icon"></i> Bidding History
-                    </a>
-                    <a class="nav-link" href="{{ route('admin.bidding-status.index') }}">
-                        <i class="fas fa-chart-line menu-icon"></i> Bidding Status
-                    </a>
-                    <a class="nav-link" href="#">
-                        <i class="fas fa-book menu-icon"></i> Rules & User Manual   
-                    </a>
-                    <a class="nav-link" href="{{ route('admin.payments.index') }}">
-                        <i class="fas fa-credit-card menu-icon"></i> Payment Records
-                    </a>
-                    <a class="nav-link" href="{{ route('admin.profit.report') }}">
-                        <i class="fas fa-chart-line menu-icon"></i> Profit Report
-                    </a>
-                    <a class="nav-link" a href="{{ route('admin.profile') }}">
-                        <i class="fas fa-user-circle menu-icon"></i> Profile
-                    </a>
-
-                </nav>
-
-                <!-- Logout Section -->
-                <div class="logout-section">
-                    <button class="logout-btn" onclick="handleLogout()">
-                        <i class="fas fa-sign-out-alt menu-icon"></i> Logout
-                    </button>
-                </div>
-            </div>
-        </div>
+        
 
         <!-- Main Content -->
         <div class="main-content">

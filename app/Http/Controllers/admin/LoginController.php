@@ -1,52 +1,52 @@
-<?php
+<?php  
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\admin;  
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;  
+use Illuminate\Http\Request;  
+use Illuminate\Support\Facades\Auth;  
+use App\Models\LoginLog; // Pastikan model ini diimport  
+use Jenssegers\Agent\Agent;  
 
-class LoginController extends Controller
-{
-    // Papar borang login admin
-    public function showLoginForm()
-    {
-        return view('auth.admin.login');
-    }
+class LoginController extends Controller  
+{  
+    // Papar borang login admin  
+    public function showLoginForm()  
+    {  
+        return view('auth.admin.login');  
+    }  
 
-    // Proses login admin
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'regex:/[a-z]/',        // huruf kecil
-                'regex:/[A-Z]/',        // huruf besar
-                'regex:/[0-9]/',        // nombor
-                'regex:/[@$!%*#?&]/',   // simbol khas
-            ],
-        ]);
+    // Proses login admin  
+    public function login(Request $request)  
+    {  
+        $credentials = $request->only('email', 'password');  
 
-        $credentials = $request->only(['email', 'password']);
+        if (Auth::guard('admin')->attempt($credentials)) {  
+            $agent = new Agent();  
 
-        if (Auth::guard('admin')->attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended(route('admin.dashboard'))->with('success', 'Welcome back!');
-        }
+            // Catat log masuk sebagai admin  
+            LoginLog::create([  
+                'ip_address' => $request->ip(),  
+                'device' => $agent->platform() . ' - ' . $agent->browser(),  
+                'login_time' => now(),  
+                'admin_id' => Auth::guard('admin')->id(), // Mencatat ID admin  
+                'user_id' => null, // Pastikan ID pengguna biasa null  
+            ]);  
 
-        return back()->with('error', 'Incorrect email or password.');
-    }
+            return redirect()->route('admin.dashboard');  
+        }  
 
-    // Logout admin
-    public function logout(Request $request)
-    {
-        Auth::guard('admin')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        return back()->withErrors(['email' => 'Login failed']);  
+    }  
+    
 
-        return redirect()->route('admin.login');
-    }
+    // Logout admin  
+    public function logout(Request $request)  
+    {  
+        Auth::guard('admin')->logout();  
+        $request->session()->invalidate();  
+        $request->session()->regenerateToken();  
+
+        return redirect()->route('admin.login');  
+    }  
 }

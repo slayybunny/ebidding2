@@ -269,6 +269,67 @@
         background-color: #ccc;
         cursor: not-allowed;
     }
+    .input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input {
+    padding-right: 40px !important; /* ruang untuk ikon mata */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+    font-size: 16px;
+}
+
+.toggle-password:hover {
+    color: #b8860b;
+}
+
+.help-text {
+    margin-top: 5px;
+    font-size: 13px;
+    display: none;
+}
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 10px 40px 10px 40px; /* ruang kiri & kanan utk ikon */
+    box-sizing: border-box;
+}
+
+.input-icon-left {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 16px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+    font-size: 16px;
+}
+
+.toggle-password:hover {
+    color: #b8860b;
+}
+
+
 
     </style>
 </head>
@@ -317,20 +378,28 @@
             </div>
 
             <div class="form-row">
-            <!-- Password -->
-            <div class="form-group">
-                <input type="password" name="password" id="password" placeholder="Password" required>
-                <div id="password-help" style="margin-top: 5px; font-size: 13px; display: none;"></div>
-            </div>
+    <!-- Password -->
+<div class="form-group">
+    <div class="input-wrapper">
+        <span class="input-icon-left"><i class="fas fa-lock"></i></span>
+        <input type="password" name="password" id="password" placeholder="Password" required>
+        <i class="fas fa-eye toggle-password" data-target="password"></i>
+    </div>
+    <div id="password-help" class="help-text"></div>
+</div>
 
-            <!-- Confirm Password -->
-            <div class="form-group">
-                <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password" required>
-                <div id="confirm-password-help" style="margin-top: 5px; font-size: 13px; display: none;"></div>
-            </div>
+<!-- Confirm Password -->
+<div class="form-group">
+    <div class="input-wrapper">
+        <span class="input-icon-left"><i class="fas fa-lock"></i></span>
+        <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password" required>
+        <i class="fas fa-eye toggle-password" data-target="password_confirmation"></i>
+    </div>
+    <div id="confirm-password-help" class="help-text"></div>
+</div>
 
+</div>
 
-            </div>
 
             <div class="form-group">
                 <select name="role" required>
@@ -585,6 +654,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleIcons = document.querySelectorAll(".toggle-password");
+
+    toggleIcons.forEach(icon => {
+        icon.addEventListener("click", function () {
+            const inputId = this.getAttribute("data-target");
+            const input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                this.classList.remove("fa-eye");
+                this.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                this.classList.remove("fa-eye-slash");
+                this.classList.add("fa-eye");
+            }
+        });
+    });
+});
+</script>
+
 
 
 

@@ -11,32 +11,39 @@ use App\Http\Controllers\admin\BiddingStatusController;
 use App\Http\Controllers\admin\PaymentRecordController;
 use App\Http\Controllers\admin\ProfitReportController;
 use App\Http\Controllers\admin\RulesManualController;
+use App\Http\Controllers\admin\PageController;
+use App\Http\Controllers\admin\ManageMembersController;
 
-// ✅ Semua route admin berada di bawah prefix "admin"
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    // ✅ Route untuk tetamu admin (belum login)
     Route::middleware('guest:admin')->group(function () {
+        // Halaman Login Admin
         Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
         Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+        
+        // Halaman Register Admin
         Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
-        Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
     });
 
-    // ✅ Route logout (boleh dipanggil dari mana-mana)
+    // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    // ✅ Route yang perlukan auth admin
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
 
-        // Profile
+        // Profile Admin
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
         Route::get('/profile/edit', [ProfileController::class, 'editProfile'])->name('profile.edit');
         Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-        // Manage Users
+        // Manage Users (Users & Admins)
         Route::get('/manage-users', [ManageUsersController::class, 'index'])->name('manage_users');
+        Route::get('/users/{user}', [ManageUsersController::class, 'showUser'])->name('users.show');
+        Route::delete('/users/{user}', [ManageUsersController::class, 'destroyUser'])->name('users.delete');
+        Route::get('/admins/{admin}', [ManageUsersController::class, 'showAdmin'])->name('admins.show');
+        Route::delete('/admins/{admin}', [ManageUsersController::class, 'destroyAdmin'])->name('admins.delete');
+        Route::get('/manage-members', [ManageMembersController::class, 'index'])->name('manage-members');
 
         // Bidding Platform
         Route::get('/bidding', [BiddingPlatformController::class, 'index'])->name('bidding.index');
@@ -48,6 +55,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Bidding History
         Route::get('/bidding-history', [BiddingHistoryController::class, 'index'])->name('bidding-history.index');
+        Route::delete('login-log/{id}', [BiddingHistoryController::class, 'destroyLoginLog'])->name('login-log.destroy');
 
         // Bidding Status
         Route::get('/bidding-status', [BiddingStatusController::class, 'index'])->name('bidding-status.index');
@@ -55,7 +63,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/bidding-status/{id}/update', [BiddingStatusController::class, 'update'])->name('bidding-status.update');
 
         // Rules Manual
-        Route::get('/rules-manual', [RulesManualController::class, 'index'])->name('rules.manual');
+        Route::get('/rules_and_manual', [RulesManualController::class, 'index'])->name('rules_manual');
 
         // Payment Records
         Route::get('/payments/records', [PaymentRecordController::class, 'index'])->name('payments.index');

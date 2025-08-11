@@ -40,9 +40,9 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                    <i class="fas fa-eye me-1"></i> Lihat
-                                </a>
+                            <a href="{{ route('admin.bidding-status.show', ['id' => 1]) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                <i class="fas fa-eye me-1"></i> Lihat
+                            </a>
                             </td>
                         </tr>
 
@@ -60,7 +60,7 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                <a href="{{ route('admin.bidding-status.show', ['id' => 1]) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                                     <i class="fas fa-eye me-1"></i> Lihat
                                 </a>
                             </td>
