@@ -156,10 +156,10 @@
                             placeholder="Describe your gold item in detail..." required>{{ old('info') }}</textarea>
                     </div>
 
-                   <!-- Image Upload -->
+                  <!-- Image Upload -->
 <div>
     <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Image (Optional)</label>
-    <div class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center hover:border-amber-400 transition-colors">
+    <div id="upload-box" class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center hover:border-amber-400 transition-colors">
         <input type="file" name="image" id="image-upload" class="hidden" accept="image/*" />
         <label for="image-upload" class="cursor-pointer">
             <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" stroke="currentColor" fill="none" viewBox="0 0 48 48">
@@ -168,6 +168,13 @@
             <span class="text-sm text-gray-600">Click to upload</span>
             <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
         </label>
+
+        <!-- Tempat preview gambar -->
+        <div id="preview-container" class="mt-4 hidden">
+    <img id="preview-image" src="" alt="Preview" class="mx-auto rounded-md shadow-sm max-h-20" />
+    <p id="file-name" class="mt-1 text-gray-700 text-xs"></p>
+</div>
+
     </div>
 </div>
 
@@ -222,4 +229,29 @@ textarea::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
 }
 </style>
+<script>
+      const imageInput = document.getElementById('image-upload');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+    const fileNameDisplay = document.getElementById('file-name');
+
+    imageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+
+            reader.addEventListener('load', function() {
+                previewImage.setAttribute('src', this.result);
+                previewContainer.classList.remove('hidden');
+            });
+
+            reader.readAsDataURL(file);
+            fileNameDisplay.textContent = file.name;
+        } else {
+            previewContainer.classList.add('hidden');
+            previewImage.setAttribute('src', '');
+            fileNameDisplay.textContent = '';
+        }
+    });
+</script>
 @endsection

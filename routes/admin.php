@@ -13,6 +13,7 @@ use App\Http\Controllers\admin\ProfitReportController;
 use App\Http\Controllers\admin\RulesManualController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\admin\ManageMembersController;
+use App\Http\Controllers\admin\AdminController; // ✅ Tambah import AdminController
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
@@ -20,17 +21,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Halaman Login Admin
         Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
         Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
-        
+
         // Halaman Register Admin
         Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
+        Route::post('/register', [RegisterController::class, 'register'])->name('register.store');
     });
 
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:admin')->group(function () {
-        Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+
+    Route::get('bidding-status', [BiddingStatusController::class, 'index'])->name('bidding-status.index');
+    // lain-lain route
 
         // Profile Admin
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
@@ -52,6 +56,7 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
         Route::get('/bidding/{id}', [BiddingPlatformController::class, 'show'])->name('bidding.show');
         Route::get('/bidding/{id}/edit', [BiddingPlatformController::class, 'edit'])->name('bidding.edit');
         Route::put('/bidding/{id}', [BiddingPlatformController::class, 'update'])->name('bidding.update');
+        Route::delete('/bidding/{id}', [BiddingPlatformController::class, 'destroy'])->name('bidding.destroy');
 
         // Bidding History
         Route::get('/bidding-history', [BiddingHistoryController::class, 'index'])->name('bidding-history.index');

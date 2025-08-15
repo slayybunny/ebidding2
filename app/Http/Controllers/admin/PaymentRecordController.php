@@ -31,5 +31,5 @@ class PaymentRecordController extends Controller
 
         return view('admin.payments.index', compact('payments'));
     }
-    
+
 }

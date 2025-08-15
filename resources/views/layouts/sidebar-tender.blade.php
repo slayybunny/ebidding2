@@ -351,7 +351,7 @@
                 @endphp
 
                 @if ($listing)
-                    <a href="{{ route('listing-overview', ['slug' => $listing->slug]) }}" class="submenu-item">
+                    <a href="{{ route('listing-overview') }}" class="submenu-item">
                         <i class="fas fa-eye text-sm mr-2"></i>
                         Listing Overview
                     </a>
@@ -359,22 +359,22 @@
 
 
             </div>
-        <a href="{{ route('winner.transactions') }}"
-            class="nav-item cursor-pointer {{ request()->routeIs('rules') ? 'active' : '' }}">
-            <div class="nav-content flex items-center p-3">
-                <div class="icon-container">
-                    <i class="fas fa-book text-blue-300 nav-icon"></i>
+            <a href="{{ route('winner.transactions') }}"
+                class="nav-item cursor-pointer {{ request()->routeIs('rules') ? 'active' : '' }}">
+                <div class="nav-content flex items-center p-3">
+                    <div class="icon-container">
+                        <i class="fas fa-book text-blue-300 nav-icon"></i>
+                    </div>
+                    <span class="font-medium text-white-custom nav-text">Transactions</span>
                 </div>
-                <span class="font-medium text-white-custom nav-text">Transactions</span>
-            </div>
-            <div class="tooltip">Transactions</div>
-        </a>
+                <div class="tooltip">Transactions</div>
+            </a>
 
         </nav>
 
-        <!-- Logout -->
-        <div class="p-4 border-t border-gold logout-container">
-            <button onclick="handleLogout()"
+        <form action="{{ route('logout') }}" method="POST" class="p-4 border-t border-gold logout-container">
+            @csrf
+            <button type="submit"
                 class="w-full nav-item flex items-center space-x-4 p-3 rounded-xl bg-red-500/30 hover:bg-red-600/40 border border-red-400/50 relative">
                 <div class="nav-content flex items-center space-x-4 w-full">
                     <div class="icon-container bg-red-500/40">
@@ -384,7 +384,8 @@
                 </div>
                 <div class="tooltip">Logout</div>
             </button>
-        </div>
+        </form>
+
 
     </div>
 

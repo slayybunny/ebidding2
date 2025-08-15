@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <style>
         * {
             margin: 0;
@@ -634,9 +634,9 @@
     <i class="fas fa-chart-line menu-icon"></i> Profit Report
 </a>
 
-<a class="nav-link {{ request()->routeIs('admin.rules_manual') ? 'active' : '' }}" href="{{ route('admin.rules_manual') }}">
+<!--<a class="nav-link {{ request()->routeIs('admin.rules_manual') ? 'active' : '' }}" href="{{ route('admin.rules_manual') }}">
     <i class="fas fa-book-open menu-icon"></i> Rules & Manual
-</a>
+</a>-->
 
 
 
@@ -652,7 +652,7 @@
                     <button class="logout-btn" onclick="handleLogout()">
                         <i class="fas fa-sign-out-alt menu-icon"></i> Logout
                     </button>
-                
+
                     <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>

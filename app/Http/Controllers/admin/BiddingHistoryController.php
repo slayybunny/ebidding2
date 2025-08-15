@@ -15,21 +15,23 @@ class BiddingHistoryController extends Controller
      * @return \Illuminate\View\View
      */
     public function index()
-{
-    // Menggunakan eager loading untuk memuatkan relasi 'user' dan 'admin'
-    // ini memastikan data pengguna tersedia untuk setiap rekod log
-    $loginLogs = LoginLog::with(['user', 'admin'])->get(); 
-    
-    // Atau jika anda menggunakan pagination
-    // $loginLogs = LoginLog::with(['user', 'admin'])->paginate(10);
-    
-    return view('admin.bidding-history.index', compact('loginLogs'));
-}
+    {
+        // Menggunakan eager loading untuk memuatkan relasi 'user' dan 'admin'
+        // ini memastikan data pengguna tersedia untuk setiap rekod log
+        $loginLogs = LoginLog::with(['user', 'admin'])->get();
+
+        // Menggunakan eager loading untuk memuatkan relasi 'member' dan 'listing'
+        // seperti yang didefinisikan dalam model Bid anda
+        $biddingRecords = Bid::with(['member', 'listing'])->orderBy('created_at', 'desc')->get();
+
+        // Kembalikan view dengan data login dan bidding yang telah diambil
+        return view('admin.bidding-history.index', compact('loginLogs', 'biddingRecords'));
+    }
 
     /**
      * Remove the specified login log from storage.
      *
-     * @param  int  $id
+     * @param  LoginLog  $loginLog
      * @return \Illuminate\Http\Response
      */
     public function destroy(LoginLog $loginLog)

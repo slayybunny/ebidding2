@@ -11,9 +11,14 @@
             @foreach($winners as $winner)
                 <div class="bg-white shadow rounded-lg p-6 flex items-center justify-between">
                     <div>
+                       <img src="{{ asset($winner->listing->image) }}"
+                        alt="{{ $winner->listing->item }}"
+                        class="w-20 h-20 object-cover rounded-md shadow-sm">
                         <h3 class="text-lg font-semibold text-gray-800">{{ $winner->listing->item }}</h3>
                         <p class="text-sm text-gray-500 mt-1">Winner: {{ $winner->member->name }}</p>
                         <p class="text-sm text-gray-500">Date: {{ \Carbon\Carbon::parse($winner->created_at)->format('d M Y') }}</p>
+                          {{-- Tender (uploader) name --}}
+                        <p class="text-sm text-gray-500 mt-1">Uploaded by: {{ $winner->listing->member->name }}</p>
                     </div>
                     <div class="text-right">
                         <span class="inline-block bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full">

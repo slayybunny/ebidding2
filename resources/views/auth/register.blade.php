@@ -3,43 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Register Members</title>
-    {{--<script src="https://www.google.com/recaptcha/api.js" async defer></script>--}}
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* ====== CSS ASAL + KEMASAN ====== */
         body {
             background: #ffffff;
             min-height: 100vh;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             position: relative;
         }
-
-        /* Subtle decorative background elements */
         body::before {
             content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
             background:
                 radial-gradient(circle at 20% 20%, rgba(251, 191, 36, 0.04) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(217, 119, 6, 0.03) 0%, transparent 50%),
                 radial-gradient(circle at 40% 90%, rgba(245, 158, 11, 0.02) 0%, transparent 50%);
             z-index: -2;
         }
-
-        /* Geometric pattern overlay */
         body::after {
             content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
             background-image:
-                linear-gradient(90deg, rgba(0, 0, 0, 0.01) 1px, transparent 1px),
-                linear-gradient(rgba(0, 0, 0, 0.01) 1px, transparent 1px);
+                linear-gradient(90deg, rgba(0,0,0,0.01) 1px, transparent 1px),
+                linear-gradient(rgba(0,0,0,0.01) 1px, transparent 1px);
             background-size: 30px 30px;
             z-index: -1;
         }
@@ -47,591 +37,501 @@
         .form-container {
             background: #ffffff;
             box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.05),
-                0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                0 2px 4px -1px rgba(0, 0, 0, 0.06),
-                0 20px 40px -4px rgba(0, 0, 0, 0.05);
+                0 0 0 1px rgba(0,0,0,0.05),
+                0 4px 6px -1px rgba(0,0,0,0.1),
+                0 2px 4px -1px rgba(0,0,0,0.06),
+                0 20px 40px -4px rgba(0,0,0,0.05);
             border-radius: 24px;
             position: relative;
             overflow: hidden;
         }
-
         .form-container::before {
             content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            position: absolute; top: 0; left: 0; right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706, #b45309);
+            background: linear-gradient(90deg,#fbbf24,#f59e0b,#d97706,#b45309);
             border-radius: 24px 24px 0 0;
         }
 
+        /* Make all inputs consistent size */
         .input-field {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #ffffff;
+            transition: all .25s ease;
+            background: #fff;
             border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 16px 20px;
+            border-radius: 12px;
+            padding: 14px 18px;
             font-size: 15px;
             font-weight: 500;
             color: #1f2937;
-            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+            height: 48px; /* consistent height */
         }
-
+        .input-field::placeholder { color: #94a3b8; font-weight: 500; }
         .input-field:focus {
-            transform: translateY(-1px);
-            box-shadow:
-                0 0 0 3px rgba(251, 191, 36, 0.15),
-                0 4px 12px rgba(217, 119, 6, 0.1);
             border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245,158,11,0.06);
             outline: none;
-            background: #ffffff;
         }
-
-        .input-field::placeholder {
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .btn-register {
-            background: linear-gradient(135deg, #92400e 0%, #b45309 25%, #d97706 50%, #f59e0b 75%, #fbbf24 100%);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow:
-                0 4px 15px rgba(146, 64, 14, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-            border-radius: 16px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-register::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow:
-                0 8px 25px rgba(146, 64, 14, 0.4),
-                0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-        }
-
-        .btn-register:hover::before {
-            opacity: 1;
-        }
-
-        .btn-register span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-register:active {
-            transform: translateY(0);
-        }
-
-        .fade-in {
-            animation: fadeIn 1s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .slide-down {
-            animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        .logo-container::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706, #b45309);
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            animation: rotate 10s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .logo-container:hover::before {
-            opacity: 0.1;
-        }
-
-        .logo-glow {
-            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            z-index: 1;
-        }
-
-        .logo-glow:hover {
-            transform: scale(1.05);
-        }
-
-        select.input-field {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 16px center;
-            background-repeat: no-repeat;
-            background-size: 20px;
-            padding-right: 48px;
-        }
-
-        .alert-box {
-            border-radius: 16px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            font-weight: 500;
-            font-size: 14px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-            color: #065f46;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .alert-error {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
-            color: #991b1b;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .recaptcha-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(249, 250, 251, 0.5);
-            border-radius: 16px;
-            border: 1px solid rgba(229, 231, 235, 0.5);
-        }
-
-        .recaptcha-container > div {
-            transform: scale(0.9);
-            transform-origin: center;
-        }
-
+        /* Row with two equal columns */
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
 
-        .compact-spacing {
-            margin-bottom: 16px;
-        }
-
-        .title-section {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .title-section h1 {
+        .btn-register {
             background: linear-gradient(135deg, #92400e 0%, #b45309 25%, #d97706 50%, #f59e0b 75%, #fbbf24 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 14px;
+            color: white;
+            cursor: pointer;
+            transition: all .2s ease;
         }
+        .btn-register:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
 
-        .title-section p {
-            color: #6b7280;
-            font-size: 16px;
-            font-weight: 500;
-        }
+        .text-error { font-size: .84rem; color: #dc2626; margin-top: 6px; display: none; }
+        .text-success { font-size: .84rem; color: #16a34a; margin-top: 6px; display: none; }
 
-        .compact-form {
-            padding: 40px;
-            max-width: 550px;
-            width: 100%;
-        }
+        .strength-meter { height: 6px; border-radius: 6px; background: #eef2f7; margin-top: 8px; overflow: hidden; }
+        .strength-bar { height: 100%; width: 0%; transition: width .25s ease, background-color .25s ease; }
 
-        .floating-decoration {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(217, 119, 6, 0.05) 100%);
-            animation: float 8s ease-in-out infinite;
-            z-index: -1;
-        }
+        /* container for input+toggle to position button inside */
+        .input-wrap { position: relative; width: 100%; }
+        .input-with-toggle { padding-right: 76px; } /* space for the show button */
+     .input-wrap {
+    position: relative;
+    min-height: 48px; /* lock height */
+    display: flex;
+    align-items: center;
+}
 
-        .floating-decoration:nth-child(1) {
-            top: -100px;
-            right: -100px;
-            animation-delay: 0s;
-        }
+.input-with-toggle {
+  padding-right: 40px; /* ruang untuk icon */
+  height: 48px;        /* lock height supaya tak berubah */
+}
 
-        .floating-decoration:nth-child(2) {
-            bottom: -100px;
-            left: -100px;
-            animation-delay: 4s;
-            width: 150px;
-            height: 150px;
-        }
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
 
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg) scale(1);
-                opacity: 0.7;
-            }
-            50% {
-                transform: translateY(-20px) rotate(180deg) scale(1.1);
-                opacity: 1;
-            }
-        }
+.toggle-password:hover {
+    color: #f59e0b;
+}
 
-        .login-link {
-            display: inline-block;
-            position: relative;
-            color: #d97706;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
+        .toggle-password:active { transform: translateY(-50%) scale(.98); }
 
-        .login-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -2px;
-            left: 0;
-            background: linear-gradient(90deg, #f59e0b, #fbbf24);
-            transition: width 0.3s ease;
-        }
+        .alert-box { border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; font-weight: 500; }
+        .alert-error { background: rgba(254,226,226,0.6); color: #991b1b; border: 1px solid rgba(239,68,68,0.12); }
 
-        .login-link:hover::after {
-            width: 100%;
-        }
-
-        .login-link:hover {
-            color: #b45309;
-            transform: translateY(-1px);
-        }
-
-        /* Input field enhancements */
-        .input-group {
-            position: relative;
-        }
-
-        .input-field:focus + .input-focus-line {
-            width: 100%;
-        }
-
-        .input-focus-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 2px;
-            width: 0;
-            background: linear-gradient(90deg, #f59e0b, #fbbf24);
-            transition: width 0.3s ease;
-            border-radius: 0 0 16px 16px;
-        }
-
+        /* mobile */
         @media (max-width: 640px) {
-            .compact-form {
-                padding: 24px;
-                margin: 16px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .title-section h1 {
-                font-size: 24px;
-            }
-
-            .input-field {
-                padding: 14px 16px;
-                font-size: 14px;
-            }
+            .form-row { grid-template-columns: 1fr; gap: 12px; }
         }
 
-        @media (max-height: 700px) {
-            .compact-form {
-                padding: 24px;
-            }
-            .input-field {
-                padding: 12px 16px;
-                font-size: 14px;
-            }
-            .title-section h1 {
-                font-size: 24px;
-                margin-bottom: 4px;
-            }
-        }
+        .strength-text {
+    font-size: 0.84rem;
+    font-weight: 600;
+    margin-top: 4px;
+    display: none;
+}
     </style>
-    <script>
-        function toggleFields() {
-            const category = document.getElementById('category').value;
-            const mykadFields = document.getElementById('mykadFields');
-            const passportFields = document.getElementById('passportFields');
-
-            if (category === 'WARGANEGARA MALAYSIA') {
-                mykadFields.classList.remove('hidden');
-                mykadFields.classList.add('form-row', 'slide-down');
-                passportFields.classList.add('hidden');
-                passportFields.classList.remove('form-row', 'slide-down');
-            } else if (category === 'BUKAN WARGANEGARA') {
-                passportFields.classList.remove('hidden');
-                passportFields.classList.add('form-row', 'slide-down');
-                mykadFields.classList.add('hidden');
-                mykadFields.classList.remove('form-row', 'slide-down');
-            } else {
-                mykadFields.classList.add('hidden');
-                mykadFields.classList.remove('form-row', 'slide-down');
-                passportFields.classList.add('hidden');
-                passportFields.classList.remove('form-row', 'slide-down');
-            }
-        }
-        document.addEventListener('DOMContentLoaded', toggleFields);
-    </script>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-    <div class="floating-decoration"></div>
-    <div class="floating-decoration"></div>
 
-    <div class="fade-in relative z-10">
-        <div class="title-section">
-            <div class="logo-container">
-                <img src="/images/logo-sgcc.png" alt="SGCC Logo" class="w-24 mx-auto mb-4 logo-glow">
-            </div>
-            <h1>REGISTER MEMBERS</h1>
-            <p>Join our community today</p>
-        </div>
-
-        <div id="alerts">
-            <!-- Success/Error messages will appear here -->
-        </div>
-
-        <form method="POST" action="/register" class="form-container compact-form" id="registerForm" novalidate>
-            @csrf
-            <div class="space-y-4">
-                <div class="input-group">
-                    <select id="category" name="category" onchange="toggleFields()" class="input-field w-full compact-spacing" required>
-                        <option value="">SELECT CATEGORY</option>
-                        <option value="WARGANEGARA MALAYSIA">WARGANEGARA MALAYSIA</option>
-                        <option value="BUKAN WARGANEGARA">BUKAN WARGANEGARA</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" name="name" placeholder="FULL NAME" maxlength="100" class="input-field w-full compact-spacing" required oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
-                </div>
-
-                <div class="input-group">
-                    <input type="text" name="phone" placeholder="PHONE NUMBER" maxlength="14" class="input-field w-full compact-spacing" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                </div>
-
-                <div id="mykadFields" class="compact-spacing hidden">
-                    <div class="input-group">
-                        <input type="text" name="mykad" placeholder="MYKAD" maxlength="12" class="input-field" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                    </div>
-                    <div class="input-group">
-                        <input type="text" name="confirm_mykad" placeholder="CONFIRM MYKAD" maxlength="12" class="input-field" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                    </div>
-                </div>
-
-                <div id="passportFields" class="compact-spacing hidden">
-                    <div class="input-group">
-                        <input type="text" name="passport" placeholder="PASSPORT NO." maxlength="9" class="input-field" oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '')">
-                    </div>
-                    <div class="input-group">
-                        <input type="text" name="confirm_passport" placeholder="CONFIRM PASSPORT" maxlength="9" class="input-field" oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '')">
-                    </div>
-                </div>
-
-                <div class="form-row compact-spacing">
-                    <div class="input-group">
-                        <input type="email" name="email" placeholder="EMAIL" class="input-field" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="email" name="email_confirmation" placeholder="CONFIRM EMAIL" class="input-field" required>
-                    </div>
-                </div>
-
-                <div class="form-row compact-spacing">
-    <div class="input-group relative">
-        <input type="password" id="password" name="password" placeholder="PASSWORD" class="input-field" required>
-        <button type="button" class="absolute right-3 top-2.5 text-sm text-gray-600 toggle-password"
-            data-target="password">Show</button>
+<div class="fade-in relative z-10" style="width:100%;max-width:720px">
+    <div class="title-section text-center mb-6">
+        <img src="/images/logo-sgcc.png" alt="SGCC Logo" class="w-24 mx-auto mb-4">
+        <h1 style="font-weight:800; font-size:24px; margin-bottom:6px">REGISTER MEMBERS</h1>
+        <p style="color:#6b7280; margin:0">Join our community today</p>
     </div>
-    <div class="input-group relative">
-        <input type="password" id="password_confirmation" name="password_confirmation" placeholder="CONFIRM PASSWORD" class="input-field" required>
-        <button type="button" class="absolute right-3 top-2.5 text-sm text-gray-600 toggle-password"
-            data-target="password_confirmation">Show</button>
+
+     <!-- Alert Session -->
+    <?php if (!empty($_SESSION['success'])): ?>
+        <div class="alert-box alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
+    <?php endif; ?>
+    <?php if (!empty($_SESSION['error'])): ?>
+        <div class="alert-box alert-error"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
+    <?php endif; ?>
+
+    <form method="POST" action="/register" class="form-container compact-form p-6" id="registerForm" novalidate>
+        @csrf
+        <div class="space-y-4">
+
+            <!-- category single full width -->
+            <div>
+                <select id="category" name="category" class="input-field" required>
+                    <option value="">SELECT CATEGORY</option>
+                    <option value="WARGANEGARA MALAYSIA">WARGANEGARA MALAYSIA</option>
+                    <option value="BUKAN WARGANEGARA">BUKAN WARGANEGARA</option>
+                </select>
+                <div id="categoryError" class="text-error" aria-live="polite"></div>
+            </div>
+
+            <!-- name -->
+            <div>
+                <input id="name" name="name" type="text" placeholder="FULL NAME" class="input-field" maxlength="100" required
+                       oninput="this.value=this.value.replace(/[^a-zA-Z\s]/g,'')">
+                <div id="nameError" class="text-error" aria-live="polite"></div>
+            </div>
+
+            <!-- phone -->
+            <div>
+                <input id="phone" name="phone" type="text" placeholder="PHONE NUMBER" class="input-field" maxlength="14" required
+                       oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <div id="phoneError" class="text-error" aria-live="polite"></div>
+            </div>
+
+            <!-- MYKAD / PASSPORT area: each uses form-row but container is hidden/shown; width matches password -->
+            <div id="mykadFields" style="display:none">
+                <div class="form-row">
+                    <div>
+                        <input id="mykad" name="mykad" type="text" placeholder="MYKAD" class="input-field" maxlength="12"
+                               oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </div>
+                    <div>
+                        <input id="confirm_mykad" name="confirm_mykad" type="text" placeholder="CONFIRM MYKAD" class="input-field" maxlength="12"
+                               oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </div>
+                </div>
+                <div id="confirmMykadError" class="text-error" aria-live="polite"></div>
+            </div>
+
+            <div id="passportFields" style="display:none">
+                <div class="form-row">
+                    <div>
+                        <input id="passport" name="passport" type="text" placeholder="PASSPORT NO." class="input-field" maxlength="9"
+                               oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')">
+                    </div>
+                    <div>
+                        <input id="confirm_passport" name="confirm_passport" type="text" placeholder="CONFIRM PASSPORT" class="input-field" maxlength="9"
+                               oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')">
+                    </div>
+                </div>
+                <div id="confirmPassportError" class="text-error" aria-live="polite"></div>
+            </div>
+
+            <!-- Email row (two equal columns, same width as password) -->
+            <div class="form-row">
+                <div>
+                    <input id="email" name="email" type="email" placeholder="EMAIL" class="input-field" required>
+                </div>
+                <div>
+                    <input id="email_confirmation" name="email_confirmation" type="email" placeholder="CONFIRM EMAIL" class="input-field" required>
+                </div>
+            </div>
+            <div id="emailConfirmError" class="text-error" aria-live="polite"></div>
+
+<!-- PASSWORD & CONFIRM PASSWORD -->
+<div class="form-row">
+    <!-- Password -->
+    <div>
+        <div class="input-wrap">
+            <input type="password" id="password" name="password"
+                   placeholder="PASSWORD"
+                   class="input-field input-with-toggle" required>
+            <button type="button" class="toggle-password" data-target="password">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-open" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477
+                             0 8.268 2.943 9.542 7-1.274 4.057-5.065
+                             7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-closed hidden" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13.875 18.825A10.05 10.05 0 0112
+                             19c-4.478 0-8.269-2.944-9.543-7a9.964
+                             9.964 0 012.158-3.304M9.88 9.88a3
+                             3 0 104.24 4.24M3 3l18 18" />
+                </svg>
+            </button>
+        </div>
+        <div class="strength-meter"><div id="strengthBar" class="strength-bar"></div></div>
+        <div id="strengthText" class="strength-text"></div>
+        <div id="passwordError" class="text-error" aria-live="polite"></div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div>
+        <div class="input-wrap">
+            <input type="password" id="password_confirmation" name="password_confirmation"
+                   placeholder="CONFIRM PASSWORD"
+                   class="input-field input-with-toggle" required>
+            <button type="button" class="toggle-password" data-target="password_confirmation">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-open" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477
+                             0 8.268 2.943 9.542 7-1.274 4.057-5.065
+                             7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-closed hidden" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13.875 18.825A10.05 10.05 0 0112
+                             19c-4.478 0-8.269-2.944-9.543-7a9.964
+                             9.964 0 012.158-3.304M9.88 9.88a3
+                             3 0 104.24 4.24M3 3l18 18" />
+                </svg>
+            </button>
+        </div>
+        <div id="passwordConfirmError" class="text-error" aria-live="polite"></div>
     </div>
 </div>
 
 
-                <button type="submit" class="btn-register w-full text-white py-4 mt-6 text-sm">
-                    <span>REGISTER NOW</span>
-                </button>
+<!-- BUTTON REGISTER -->
+<div class="mt-6">
+    <button type="submit" class="btn-register w-full">
+        REGISTER
+    </button>
+</div>
 
-                <p class="text-center text-sm text-gray-600 mt-6">
-                    Already have an account?
-                    <a href="/login" class="login-link ml-1">Login Here</a>
-                </p>
-            </div>
-        </form>
-    </div>
 
-    <script>
-    // Highlight input border on focus/blur
-    document.querySelectorAll('.input-field').forEach(field => {
-        field.addEventListener('focus', function() {
-            this.style.borderColor = '#f59e0b';
-        });
+        <div class="text-center mt-6 space-y-3">
+    <p class="text-sm text-gray-600">
+        Already have an account?
+        <a href="/login" class="text-yellow-600 font-semibold hover:text-yellow-800">Log in here</a>
+    </p>
+</div>
+    </form>
+</div>
 
-        field.addEventListener('blur', function() {
-            this.style.borderColor = '#e5e7eb';
-        });
-    });
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Elements
+    const category = document.getElementById('category');
+    const mykadFields = document.getElementById('mykadFields');
+    const passportFields = document.getElementById('passportFields');
 
-    // Toggle field based on category (MyKad/Passport)
-    function toggleFields() {
-        const category = document.getElementById('category').value;
-        const mykadFields = document.getElementById('mykadFields');
-        const passportFields = document.getElementById('passportFields');
+    const email = document.getElementById('email');
+    const emailConfirm = document.getElementById('email_confirmation');
+    const emailConfirmError = document.getElementById('emailConfirmError');
 
-        if (category === 'WARGANEGARA MALAYSIA') {
-            mykadFields.classList.remove('hidden');
-            mykadFields.classList.add('form-row', 'slide-down');
-            passportFields.classList.add('hidden');
-            passportFields.classList.remove('form-row', 'slide-down');
-        } else if (category === 'BUKAN WARGANEGARA') {
-            passportFields.classList.remove('hidden');
-            passportFields.classList.add('form-row', 'slide-down');
-            mykadFields.classList.add('hidden');
-            mykadFields.classList.remove('form-row', 'slide-down');
+    const pass = document.getElementById('password');
+    const passConfirm = document.getElementById('password_confirmation');
+    const passwordError = document.getElementById('passwordError');
+    const passwordConfirmError = document.getElementById('passwordConfirmError');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthMsg = document.getElementById('passwordStrengthMsg');
+
+    const mykad = document.getElementById('mykad');
+    const confirmMykad = document.getElementById('confirm_mykad');
+    const confirmMykadError = document.getElementById('confirmMykadError');
+
+    const passport = document.getElementById('passport');
+    const confirmPassport = document.getElementById('confirm_passport');
+    const confirmPassportError = document.getElementById('confirmPassportError');
+
+    const alerts = document.getElementById('alerts');
+    const form = document.getElementById('registerForm');
+
+    function showError(el, msg) {
+        if (!el) return;
+        if (msg) {
+            el.textContent = msg;
+            el.style.display = 'block';
         } else {
-            mykadFields.classList.add('hidden');
-            mykadFields.classList.remove('form-row', 'slide-down');
-            passportFields.classList.add('hidden');
-            passportFields.classList.remove('form-row', 'slide-down');
+            el.textContent = '';
+            el.style.display = 'none';
         }
     }
-    document.addEventListener('DOMContentLoaded', toggleFields);
 
-    // Validasi padanan sebelum submit
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("registerForm");
+    // Toggle fields and clear hidden values
+    function toggleFields() {
+        const val = category.value;
+        if (val === 'WARGANEGARA MALAYSIA') {
+            mykadFields.style.display = 'block';
+            passportFields.style.display = 'none';
+            // clear passport values
+            if (passport) passport.value = '';
+            if (confirmPassport) confirmPassport.value = '';
+            showError(confirmPassportError, '');
+        } else if (val === 'BUKAN WARGANEGARA') {
+            passportFields.style.display = 'block';
+            mykadFields.style.display = 'none';
+            if (mykad) mykad.value = '';
+            if (confirmMykad) confirmMykad.value = '';
+            showError(confirmMykadError, '');
+        } else {
+            mykadFields.style.display = 'none';
+            passportFields.style.display = 'none';
+            if (mykad) mykad.value = '';
+            if (confirmMykad) confirmMykad.value = '';
+            if (passport) passport.value = '';
+            if (confirmPassport) confirmPassport.value = '';
+            showError(confirmMykadError, '');
+            showError(confirmPassportError, '');
+        }
+    }
+    // initial
+    toggleFields();
+    category.addEventListener('change', toggleFields);
 
-        form.addEventListener("submit", function (e) {
-            const errors = [];
+    // Password strength
+    function calcStrength(pw) {
+        let s = 0;
+        if (pw.length >= 8) s++;
+        if (/[A-Z]/.test(pw)) s++;
+        if (/[a-z]/.test(pw)) s++;
+        if (/[0-9]/.test(pw)) s++;
+        if (/[^A-Za-z0-9]/.test(pw)) s++;
+        return s;
+    }
+    function updateStrengthUI(pw) {
+        const score = calcStrength(pw);
+        const pct = (score / 5) * 100;
+        strengthBar.style.width = pct + '%';
+        let color = '#dc2626';
+        let text = 'Weak';
+        if (score >= 4) { color = '#16a34a'; text = 'Strong'; }
+        else if (score >= 3) { color = '#f59e0b'; text = 'Medium'; }
+        strengthBar.style.backgroundColor = color;
+        if (pw.length === 0) {
+            strengthMsg.style.display = 'none';
+        } else {
+            strengthMsg.style.display = 'block';
+            strengthMsg.textContent = text;
+            strengthMsg.style.color = color;
+        }
+    }
 
-            const email = form.querySelector('input[name="email"]').value.trim();
-            const emailConfirm = form.querySelector('input[name="email_confirmation"]').value.trim();
+    // Real-time validation handlers
+    function validateEmailConfirm() {
+        if (!email || !emailConfirm) return;
+        if (emailConfirm.value.trim() === '') { showError(emailConfirmError, ''); return; }
+        showError(emailConfirmError, email.value.trim() !== emailConfirm.value.trim() ? 'Emails do not match.' : '');
+    }
+    email && email.addEventListener('input', validateEmailConfirm);
+    emailConfirm && emailConfirm.addEventListener('input', validateEmailConfirm);
 
-            const password = form.querySelector('input[name="password"]').value;
-            const passwordConfirm = form.querySelector('input[name="password_confirmation"]').value;
-
-            const category = form.querySelector('#category').value;
-
-            const mykad = form.querySelector('input[name="mykad"]')?.value.trim();
-            const confirmMykad = form.querySelector('input[name="confirm_mykad"]')?.value.trim();
-
-            const passport = form.querySelector('input[name="passport"]')?.value.trim();
-            const confirmPassport = form.querySelector('input[name="confirm_passport"]')?.value.trim();
-
-            if (email !== emailConfirm) {
-                errors.push("Email and Confirm Email do not match.");
-            }
-
-            if (password !== passwordConfirm) {
-                errors.push("Password and Confirm Password do not match.");
-            }
-
-            if (category === "WARGANEGARA MALAYSIA" && mykad !== confirmMykad) {
-                errors.push("MyKad and Confirm MyKad do not match.");
-            }
-
-            if (category === "BUKAN WARGANEGARA" && passport !== confirmPassport) {
-                errors.push("Passport and Confirm Passport do not match.");
-            }
-
-            const alerts = document.getElementById('alerts');
-            alerts.innerHTML = ''; // Clear previous messages
-
-            if (errors.length > 0) {
-                e.preventDefault(); // BLOCK form submission
-                alerts.innerHTML = `
-                    <div class="alert-box alert-error slide-down">
-                        <ul class="list-disc list-inside space-y-1">
-                            ${errors.map(err => `<li>${err}</li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        });
+    pass && pass.addEventListener('input', (e) => {
+        updateStrengthUI(e.target.value);
+        if (passConfirm && passConfirm.value.length > 0) {
+            showError(passwordConfirmError, pass.value !== passConfirm.value ? 'Passwords do not match.' : '');
+        }
+        showError(passwordError, '');
+    });
+    passConfirm && passConfirm.addEventListener('input', () => {
+        showError(passwordConfirmError, pass.value !== passConfirm.value ? 'Passwords do not match.' : '');
     });
 
-     document.querySelectorAll('.toggle-password').forEach(function (button) {
-    button.addEventListener('click', function () {
-        const targetId = this.getAttribute('data-target');
-        const input = document.getElementById(targetId);
-        if (input.type === 'password') {
-            input.type = 'text';
-            this.innerText = 'Hide';
+    if (confirmMykad) {
+        confirmMykad.addEventListener('input', () => {
+            if (category.value === 'WARGANEGARA MALAYSIA') {
+                showError(confirmMykadError, (mykad && mykad.value.trim() !== confirmMykad.value.trim()) ? 'MyKad numbers do not match.' : '');
+            } else showError(confirmMykadError, '');
+        });
+        mykad && mykad.addEventListener('input', () => {
+            if (confirmMykad && confirmMykad.value.length > 0 && category.value === 'WARGANEGARA MALAYSIA') {
+                showError(confirmMykadError, mykad.value.trim() !== confirmMykad.value.trim() ? 'MyKad numbers do not match.' : '');
+            }
+        });
+    }
+    if (confirmPassport) {
+        confirmPassport.addEventListener('input', () => {
+            if (category.value === 'BUKAN WARGANEGARA') {
+                showError(confirmPassportError, (passport && passport.value.trim() !== confirmPassport.value.trim()) ? 'Passport numbers do not match.' : '');
+            } else showError(confirmPassportError, '');
+        });
+        passport && passport.addEventListener('input', () => {
+            if (confirmPassport && confirmPassport.value.length > 0 && category.value === 'BUKAN WARGANEGARA') {
+                showError(confirmPassportError, passport.value.trim() !== confirmPassport.value.trim() ? 'Passport numbers do not match.' : '');
+            }
+        });
+    }
+
+document.querySelectorAll('.toggle-password').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        const eyeOpen = btn.querySelector('.eye-open');
+        const eyeClosed = btn.querySelector('.eye-closed');
+
+        if (target.type === 'password') {
+            target.type = 'text';
+            eyeOpen.classList.add('hidden');
+            eyeClosed.classList.remove('hidden');
         } else {
-            input.type = 'password';
-            this.innerText = 'Show';
+            target.type = 'password';
+            eyeOpen.classList.remove('hidden');
+            eyeClosed.classList.add('hidden');
         }
     });
 });
 
+
+    // Final submit validation
+    form.addEventListener('submit', (ev) => {
+        const errors = [];
+
+        // email
+        if (email && emailConfirm && email.value.trim() !== emailConfirm.value.trim()) {
+            errors.push('Email and Confirm Email do not match.');
+            showError(emailConfirmError, 'Emails do not match.');
+        } else showError(emailConfirmError, '');
+
+        // password match
+        if (pass && passConfirm && pass.value !== passConfirm.value) {
+            errors.push('Password and Confirm Password do not match.');
+            showError(passwordConfirmError, 'Passwords do not match.');
+        } else showError(passwordConfirmError, '');
+
+        // password rules
+        const pw = pass ? pass.value : '';
+        const pwOk = pw.length >= 8 && /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw) && /[^A-Za-z0-9]/.test(pw);
+        if (!pwOk) {
+            errors.push('Password does not meet requirements (min 8, upper, lower, number, special).');
+            showError(passwordError, 'Password must be at least 8 characters, include upper & lower case letters, a number and a special character.');
+        } else showError(passwordError, '');
+
+        // category-specific
+        if (category.value === 'WARGANEGARA MALAYSIA') {
+            const a = mykad ? mykad.value.trim() : '';
+            const b = confirmMykad ? confirmMykad.value.trim() : '';
+            if (a === '' || b === '' || a !== b) {
+                errors.push('MyKad and Confirm MyKad do not match.');
+                showError(confirmMykadError, 'MyKad numbers do not match.');
+            } else showError(confirmMykadError, '');
+            showError(confirmPassportError, '');
+        } else if (category.value === 'BUKAN WARGANEGARA') {
+            const p = passport ? passport.value.trim() : '';
+            const q = confirmPassport ? confirmPassport.value.trim() : '';
+            if (p === '' || q === '' || p !== q) {
+                errors.push('Passport and Confirm Passport do not match.');
+                showError(confirmPassportError, 'Passport numbers do not match.');
+            } else showError(confirmPassportError, '');
+            showError(confirmMykadError, '');
+        }
+
+        // if any errors, show alert and prevent submit
+        if (errors.length > 0) {
+            ev.preventDefault();
+            alerts.innerHTML = `<div class="alert-box alert-error slide-down"><ul class="list-disc list-inside">${errors.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            // ensure hidden fields cleared to avoid sending stale values
+            if (mykadFields.style.display === 'none') { mykad && (mykad.value = ''); confirmMykad && (confirmMykad.value=''); }
+            if (passportFields.style.display === 'none') { passport && (passport.value = ''); confirmPassport && (confirmPassport.value=''); }
+            // form will submit
+        }
+    });
+
+}); // DOMContentLoaded
 </script>
 </body>
 </html>
