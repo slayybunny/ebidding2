@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "1f18cf313d13600406eac821f08a0cff",
-=======
-    "content-hash": "a03bbcb123e698105b918d04e055b216",
->>>>>>> e6590236f30c79f238512e696cf642104ef3cc43
+    "content-hash": "47dd07ebf7dc0c8de9848124462b8c24",
     "packages": [
         {
             "name": "brick/math",
@@ -7167,16 +7163,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.30",
+            "version": "11.5.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "33fa3d10fed43f51bdd874965497a4925a123a53"
+                "reference": "fc44414e0779e94640663b809557b0b599548260"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/33fa3d10fed43f51bdd874965497a4925a123a53",
-                "reference": "33fa3d10fed43f51bdd874965497a4925a123a53",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fc44414e0779e94640663b809557b0b599548260",
+                "reference": "fc44414e0779e94640663b809557b0b599548260",
                 "shasum": ""
             },
             "require": {
@@ -7248,7 +7244,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.30"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.31"
             },
             "funding": [
                 {
@@ -7272,7 +7268,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-10T08:35:26+00:00"
+            "time": "2025-08-11T05:27:39+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -8417,12 +8413,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

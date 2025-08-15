@@ -3,69 +3,54 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Member;
+use App\Models\Listing;
+use App\Models\Bid;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class BiddingStatusController extends Controller
 {
     public function index()
     {
-        // Dummy list of auctions
-        $auctions = [
-            [
-                'id' => 1,
-                'product_name' => 'Gold Bar 100g',
-                'product_code' => 'GB100-001',
-                'start_time' => '2025-08-01 10:00 AM',
-                'end_time' => '2025-08-01 12:00 PM',
-                'status' => 'Akan Bermula'
-            ],
-            [
-                'id' => 2,
-                'product_name' => 'Gold Coin 50g',
-                'product_code' => 'GC50-002',
-                'start_time' => '2025-07-31 09:00 AM',
-                'end_time' => '2025-07-31 05:00 PM',
-                'status' => 'Sedang Berlangsung'
-            ],
-            [
-                'id' => 3,
-                'product_name' => 'Gold Bar 250g',
-                'product_code' => 'GB250-003',
-                'start_time' => '2025-07-30 02:00 PM',
-                'end_time' => '2025-07-30 04:00 PM',
-                'status' => 'Telah Tamat'
-            ],
-        ];
+        // Ambil semua lelongan dengan informasi member dan jumlah bidaan
+        $auctions = Listing::with('member')
+            ->withCount('bids') // Kekalkan ini, ia tidak mengganggu
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($auction) {
+                // Tentukan status berdasarkan waktu
+                $now = Carbon::now();
+                $start_time = Carbon::parse($auction->start_time);
+                $end_time = Carbon::parse($auction->end_time);
+
+                if ($now->lessThan($start_time)) {
+                    $status = 'upcoming';
+                } elseif ($now->greaterThanOrEqualTo($start_time) && $now->lessThanOrEqualTo($end_time)) {
+                    $status = 'active';
+                } else {
+                    $status = 'completed';
+                }
+
+                $auction->status = $status; // Tambah status ke objek lelongan
+                return $auction;
+            });
 
         return view('admin.bidding-status.index', compact('auctions'));
     }
 
     public function show($id)
-    {
-        // Dummy auction data
-        $auction = [
-            'id' => $id,
-            'product_name' => 'Gold Bar 100g',
-            'product_code' => 'GB100-001',
-            'start_time' => '2025-08-01 10:00 AM',
-            'end_time' => '2025-08-01 12:00 PM',
-            'status' => 'Akan Bermula',
-            'highest_bid' => 'RM 8,500.00',
-        ];
+{
+    // Ambil satu lelongan dengan semua bidaan
+    $auction = Listing::with(['bids.member', 'member'])->findOrFail($id);
 
-        // Dummy list of bids
-        $bids = [
-            ['name' => 'Ali Bin Abu', 'amount' => 'RM 8,500.00', 'time' => '2025-07-31 11:45 AM'],
-            ['name' => 'Siti Aminah', 'amount' => 'RM 8,300.00', 'time' => '2025-07-31 11:20 AM'],
-        ];
+    // Ambil bidaan dari objek lelongan
+    $bids = $auction->bids;
 
-        return view('admin.bidding-status.show', compact('auction', 'bids'));
-    }
+    // Anda juga mungkin mahu mendapatkan bidaan tertinggi
+    $highestBid = $auction->bids->sortByDesc('amount')->first();
 
-    public function update(Request $request, $id)
-    {
-        $request->validate(['status' => 'required|in:open,closed']);
-        // Dummy update logic
-        return redirect()->route('admin.bidding-status.index')->with('success', 'Status updated (dummy).');
-    }
+    // Hantar kedua-dua 'auction' dan 'bids' ke paparan
+    return view('admin.bidding-status.show', compact('auction', 'highestBid', 'bids'));
+}
 }

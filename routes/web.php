@@ -10,6 +10,7 @@ use App\Http\Controllers\{
     ChangePasswordController, BiddingController,
     TenderController, RoleSwitchController, ListingController, ToyyibpayController,
 };
+use Carbon\Carbon;
 
 // LANDING PAGE
 Route::get('/', function () {
@@ -38,7 +39,9 @@ Route::view('/about', 'about')->name('about');
 Route::view('/rules', 'rules')->name('rules');
 
 // HOME
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name('home');
+
+Route::view('/terms-and-conditions', 'terms-and-conditions')->name('terms_conditions');
 
 // AUTHENTICATED ROUTES
 Route::middleware('auth')->group(function () {
@@ -67,7 +70,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/bidding/place/{slug}', [BiddingController::class, 'placeBid'])->name('bidding.place'); // ✅ fixed route name
 
         // LISTING OVERVIEW
-        Route::get('/listing/{slug}/overview', [ListingController::class, 'overview'])->name('listing-overview');
+        Route::get('/tender/listing/overview', [ListingController::class, 'overview'])->name('listing-overview');
+
+
     });
 
     // LIVE BIDDING
@@ -101,6 +106,19 @@ Route::get('/generate-slug', function () {
     }
 
     return 'All slugs have been generated!';
+});
+
+Route::get('/fix-end-time', function () {
+    $listings = Listing::whereNull('end_time')->get();
+
+    foreach ($listings as $listing) {
+        if (!empty($listing->date) && !empty($listing->duration)) {
+            $listing->end_time = Carbon::parse($listing->date)->addMinutes($listing->duration);
+            $listing->save();
+        }
+    }
+
+    return "End time updated successfully!";
 });
 
 Route::get('/tender/winner-transactions', [WinnerTransactionController::class, 'index'])

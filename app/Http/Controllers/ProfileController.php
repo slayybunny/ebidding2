@@ -106,24 +106,31 @@ class ProfileController extends Controller
     }
 
     public function uploadPhoto(Request $request)
-    {
-        $request->validate(['photo' => 'required|image|max:2048']);
+{
+    $request->validate(['photo' => 'required|image|max:2048']);
 
-        $member = Member::find(Auth::id());
-        if (!$member) {
-            return redirect()->route('login')->with('error', 'User not found.');
-        }
-
-        if ($member->photo) {
-            Storage::disk('public')->delete($member->photo);
-        }
-
-        $path = $request->file('photo')->store('photos', 'public');
-        $member->photo = $path;
-        $member->save();
-
-        return redirect()->route('profile')->with('success', 'Profile photo uploaded.');
+    $member = Member::find(Auth::id());
+    if (!$member) {
+        return redirect()->route('login')->with('error', 'User not found.');
     }
+
+    // Delete old photo from public/images/profile if ada
+    if ($member->photo && file_exists(public_path('images/profile/' . $member->photo))) {
+        unlink(public_path('images/profile/' . $member->photo));
+    }
+
+    $file = $request->file('photo');
+    $filename = time() . '.' . $file->getClientOriginalExtension();
+
+    // Pindahkan file ke public/images/profile
+    $file->move(public_path('images/profile'), $filename);
+
+    // Simpan nama file sahaja (atau path relatif) di database
+    $member->photo = 'images/profile/' . $filename;
+    $member->save();
+
+    return redirect()->route('profile')->with('success', 'Profile photo uploaded.');
+}
 
     public function deletePhoto()
     {

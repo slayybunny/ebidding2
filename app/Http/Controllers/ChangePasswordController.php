@@ -24,12 +24,12 @@ class ChangePasswordController extends Controller
         $member = Auth::guard('web')->user();
 
         if (!Hash::check($request->current_password, $member->password)) {
-            return back()->withErrors(['current_password' => 'Kata laluan sekarang tidak sah.']);
+            return back()->withErrors(['current_password' => 'The current password is incorrect.']);
         }
 
         $member->password = Hash::make($request->new_password);
         $member->save();
 
-        return back()->with('success', 'Kata laluan berjaya dikemaskini.');
+        return back()->with('success', 'The password has been successfully updated.');
     }
 }

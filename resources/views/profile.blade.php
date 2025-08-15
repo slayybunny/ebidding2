@@ -11,25 +11,24 @@
                 {{ session('success') }}
             </div>
         @endif
-
-        <!-- Profile Info Centered -->
+<!-- Profile Info Centered -->
 <div class="flex flex-col items-center mb-6">
     <div class="w-28 h-28 rounded-full border-4 border-yellow-500 overflow-hidden">
-        <img src="{{ $member->photo ? asset('storage/' . $member->photo) : asset('images/main.jpg') }}"
+        <img src="{{ $member->photo ? asset($member->photo) : asset('images/main.jpg') }}"
              alt="" class="w-full h-full object-cover">
     </div>
     <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ $member->name }}</h2>
     <p class="text-sm text-gray-500 uppercase">{{ $member->category }}</p>
 </div>
 
+<!-- Upload / Delete Buttons -->
+<div class="flex justify-center items-center mb-6 gap-4">
+    <!-- Upload -->
+    <button onclick="document.getElementById('uploadModal').classList.remove('hidden')"
+        class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md shadow">
+        Upload Photo
+    </button>
 
-        <!-- Upload / Delete Buttons -->
-        <div class="flex justify-center items-center mb-6 gap-4">
-            <!-- Upload -->
-            <button onclick="document.getElementById('uploadModal').classList.remove('hidden')"
-                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md shadow">
-                Upload Photo
-            </button>
 
             <!-- Delete -->
             @if($member->photo)

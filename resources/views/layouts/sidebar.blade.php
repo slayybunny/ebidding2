@@ -479,15 +479,16 @@
             </div>
 
             <!-- Terms & Conditions -->
-            <a href="/t&c" class="nav-item cursor-pointer {{ request()->routeIs('t&c') ? 'active' : '' }}">
-                <div class="nav-content flex items-center p-3">
-                    <div class="icon-container">
-                        <i class="fas fa-file-alt text-orange-300 nav-icon"></i>
-                    </div>
-                    <span class="font-medium text-white-custom nav-text">Terms & Conditions</span>
-                </div>
-                <div class="tooltip">Terms & Conditions</div>
-            </a>
+            <a href="{{ route('terms_conditions') }}"
+   class="nav-item cursor-pointer {{ request()->routeIs('terms_conditions') ? 'active' : '' }}">
+    <div class="nav-content flex items-center p-3">
+        <div class="icon-container">
+            <i class="fas fa-file-alt text-orange-300 nav-icon"></i>
+        </div>
+        <span class="font-medium text-white-custom nav-text">Terms & Conditions</span>
+    </div>
+    <div class="tooltip">Terms & Conditions</div>
+</a>
         </nav>
 
         <!-- Logout -->

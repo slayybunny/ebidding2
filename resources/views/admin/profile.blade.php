@@ -112,4 +112,8 @@
             }
         });
     </script>
+<<<<<<< HEAD
 @endsection
+=======
+@endsection
+>>>>>>> 17d44544444403c83c5c411f29c1e46459bf3468

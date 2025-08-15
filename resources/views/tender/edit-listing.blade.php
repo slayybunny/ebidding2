@@ -133,25 +133,44 @@
                     </div>
                 </div>
 
-                <!-- Bidding Date -->
-                <div class="group">
-                    <label for="date" class="block font-semibold text-gray-800 mb-3 flex items-center">
-                        <span class="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>
-                        Bidding Date
-                    </label>
-                    @php
-                        $today = \Carbon\Carbon::today();
-                        $maxDate = $today->copy()->addDays(3);
-                    @endphp
-                    <div class="relative">
-                        <input type="date" id="date" name="date" value="{{ old('date', $listing->date) }}"
-                            min="{{ $today->toDateString() }}" max="{{ $maxDate->toDateString() }}"
-                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300"
-                            required>
-                    </div>
-                </div>
+              @php
+    $today = \Carbon\Carbon::today();
+    $maxDate = $today->copy()->addDays(3);
+    $isEdit = isset($listing) && $listing->id ? true : false;
 
-  <!-- Bidding Duration -->
+    // Untuk edit, value tarikh format ISO, dan tiada min/max
+    // Untuk create, value default hari ini dan min/max ikut logic asal
+    if ($isEdit) {
+        $valueDate = old('date', \Carbon\Carbon::parse($listing->date)->format('Y-m-d'));
+        $minDate = null;
+        $maxDateLimit = null;
+    } else {
+        $valueDate = old('date', $today->toDateString());
+        $minDate = $today->toDateString();
+        $maxDateLimit = $maxDate->toDateString();
+    }
+@endphp
+
+<div class="group">
+    <label for="date" class="block font-semibold text-gray-800 mb-3 flex items-center">
+        <span class="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>
+        Bidding Date
+    </label>
+    <div class="relative">
+        <input
+            type="date"
+            id="date"
+            name="date"
+            value="{{ $valueDate }}"
+            @if ($minDate) min="{{ $minDate }}" @endif
+            @if ($maxDateLimit) max="{{ $maxDateLimit }}" @endif
+            class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300"
+            required
+        >
+    </div>
+</div>
+
+
 <!-- Bidding Duration -->
 <div class="group">
     <label class="block font-semibold text-gray-800 mb-3 flex items-center">
@@ -209,42 +228,68 @@
                             placeholder="Describe your gold item in detail...">{{ old('info', $listing->info) }}</textarea>
                     </div>
                 </div>
+<!-- Image Upload -->
+<div>
+    <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Image</label>
+    <div id="upload-box" class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center hover:border-amber-400 transition-colors relative">
 
-               <!-- Image Upload -->
-<div class="group">
-    <label class="block font-semibold text-gray-800 mb-3 flex items-center">
-        <span class="w-2 h-2 bg-pink-400 rounded-full mr-2"></span>
-        Upload Image
-        <span class="ml-2 text-sm font-normal text-gray-500">(Optional)</span>
-    </label>
-    <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-yellow-400 transition-colors duration-300 group-hover:bg-yellow-50">
-        <!-- Display existing image if available -->
-        @if($listing->image)
-            <div class="mb-4">
-                <img src="{{ asset('storage/' . $listing->image) }}" alt="Current Image" class="mx-auto h-32 w-32 object-cover rounded-lg">
+        <!-- Input file -->
+        <input type="file" name="image" id="image-upload" class="hidden" accept="image/*" />
+        <label for="image-upload" class="cursor-pointer">
+            <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="text-sm text-gray-600">Click to upload</span>
+            <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+        </label>
+
+        <!-- Gambar asal (edit) -->
+        @if(isset($listing) && $listing->image)
+            <div id="existing-image" class="mt-4">
+                <p class="text-sm font-semibold mb-1">Current Image:</p>
+               <img src="{{ asset($listing->image) }}"
+     alt="{{ $listing->item }}"
+     class="w-48 h-auto object-cover rounded-md shadow-sm mx-auto">
+
             </div>
         @endif
 
-        <input type="file" name="image" id="image-upload"
-            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-        <div class="text-center">
-            <svg class="mx-auto h-12 w-12 text-gray-400 group-hover:text-yellow-500 transition-colors" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <div class="mt-4">
-                <label for="image-upload" class="cursor-pointer">
-                    <span class="mt-2 block text-sm font-medium text-gray-900 group-hover:text-yellow-600">
-                        Click to upload or drag and drop
-                    </span>
-                    <span class="mt-1 block text-xs text-gray-500">
-                        PNG, JPG, GIF up to 10MB
-                    </span>
-                </label>
-            </div>
+        <!-- Preview gambar baru -->
+        <div id="preview-container" class="mt-4 hidden">
+            <img id="preview-image" src="" alt="Preview" class="mx-auto rounded-md shadow-sm max-h-20" />
+            <p id="file-name" class="mt-1 text-gray-700 text-xs"></p>
         </div>
     </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('image-upload');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+    const fileNameDisplay = document.getElementById('file-name');
+    const existingImage = document.getElementById('existing-image');
+
+    imageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+                if (existingImage) existingImage.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+            fileNameDisplay.textContent = file.name;
+        } else {
+            previewContainer.classList.add('hidden');
+            previewImage.src = '';
+            fileNameDisplay.textContent = '';
+            if (existingImage) existingImage.style.display = 'block';
+        }
+    });
+});
+</script>
 
                 <!-- Submit Button -->
                 <div class="pt-8">

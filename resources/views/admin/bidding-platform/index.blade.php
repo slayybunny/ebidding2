@@ -4,187 +4,181 @@
 @section('page-title', 'PLATFORM BIDDING')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Official Header -->
-    <div class="official-header mb-4">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <div class="header-content">
-                    <h1 class="page-title mb-1">SISTEM PENGURUSAN BIDAAN</h1>
-                    <div class="subtitle">
-                        <span class="value">Platform Bidding Digital Malaysia</span>
+    <div class="container-fluid">
+        <div class="official-header mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="header-content">
+                        <h1 class="page-title mb-1">BIDDING MANAGEMENT SYSTEM</h1>
+                        <div class="subtitle">
+                            <span class="value">Malaysia Digital Bidding Platform</span>
+                        </div>
+                        <nav aria-label="breadcrumb" class="mt-2">
+                            <ol class="breadcrumb custom-breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home Page</a></li>
+                                <li class="breadcrumb-item active">Bidding List</li>
+                            </ol>
+                        </nav>
                     </div>
-                    <nav aria-label="breadcrumb" class="mt-2">
-                        <ol class="breadcrumb custom-breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Laman Utama</a></li>
-                            <li class="breadcrumb-item active">Senarai Bidaan</li>
-                        </ol>
-                    </nav>
                 </div>
-            </div>
-            <div class="col-md-4 text-end">
-                <div class="header-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Tarikh Sistem:</span>
-                        <span class="stat-value">{{ date('d/m/Y') }}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Masa:</span>
-                        <span class="stat-value">{{ date('H:i') }}</span>
+                <div class="col-md-4 text-end">
+                    <div class="header-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">System Date:</span>
+                            <span class="stat-value">{{ date('d/m/Y') }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Time:</span>
+                            <span class="stat-value">{{ date('H:i') }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Main Content -->
-    <div class="row">
-        <div class="col-12">
-            @php
-                use Carbon\Carbon;
-                $now = Carbon::now();
-
-                $biddings = [
-                    ['id' => 1, 'title' => 'Emas 999 10g', 'start_time' => '2025-08-07 10:00:00', 'end_time' => '2025-08-10 10:00:00'], // BERJALAN
-                    ['id' => 2, 'title' => 'Emas 916 5g', 'start_time' => '2025-07-15 09:00:00', 'end_time' => '2025-07-16 09:00:00'], // SELESAI
-                    ['id' => 3, 'title' => 'Emas 999 20g Premium', 'start_time' => '2025-08-12 14:00:00', 'end_time' => '2025-08-13 14:00:00'], // MENUNGGU
-                    ['id' => 4, 'title' => 'Emas 916 15g', 'start_time' => '2025-08-08 09:00:00', 'end_time' => '2025-08-11 18:00:00'], // BERJALAN
-                    ['id' => 5, 'title' => 'Emas 999 5g Limited Edition', 'start_time' => '2025-07-20 12:00:00', 'end_time' => '2025-07-21 12:00:00'], // SELESAI
-                    ['id' => 6, 'title' => 'Emas 999 50g VIP', 'start_time' => '2025-08-15 10:00:00', 'end_time' => '2025-08-16 16:00:00'], // MENUNGGU
-                ];
-            @endphp
-
-            <!-- Main Table Section -->
-            <div class="official-section">
-                <div class="section-header">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h3 class="section-title">SENARAI SESI BIDAAN RASMI</h3>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <div class="table-info">
-                                <span class="info-label">Jumlah Rekod:</span>
-                                <span class="info-value">{{ count($biddings) }}</span>
+        <div class="row">
+            <div class="col-12">
+                <div class="official-section">
+                    <div class="section-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h3 class="section-title">LIST OF OFFICIAL BIDDING SESSIONS</h3>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="table-info">
+                                    <span class="info-label">Total Records:</span>
+                                    {{-- Mengira rekod secara dinamik --}}
+                                    <span class="info-value">{{ count($biddings) }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="section-content p-0">
-                    <div class="table-container">
-                        <table class="table table-government mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-center" style="width: 8%;">BIL.</th>
-                                    <th style="width: 25%;">NAMA PRODUK</th>
-                                    <th class="text-center" style="width: 18%;">TARIKH MULA</th>
-                                    <th class="text-center" style="width: 18%;">TARIKH TAMAT</th>
-                                    <th class="text-center" style="width: 15%;">STATUS</th>
-                                    <th class="text-center" style="width: 16%;">TINDAKAN</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($biddings as $index => $bidding)
-                                    @php
-                                        $start = Carbon::parse($bidding['start_time']);
-                                        $end = Carbon::parse($bidding['end_time']);
-                                        $statusClass = '';
-                                        $statusText = '';
-                                        $statusIcon = '';
-
-                                        if ($now->lt($start)) {
-                                            $statusClass = 'status-pending';
-                                            $statusText = 'MENUNGGU';
-                                            $statusIcon = 'fas fa-clock';
-                                        } elseif ($now->between($start, $end)) {
-                                            $statusClass = 'status-ongoing';
-                                            $statusText = 'BERJALAN';
-                                            $statusIcon = 'fas fa-play-circle';
-                                        } else {
-                                            $statusClass = 'status-ended';
-                                            $statusText = 'SELESAI';
-                                            $statusIcon = 'fas fa-check-circle';
-                                        }
-                                    @endphp
-
+                    <div class="section-content p-0">
+                        <div class="table-container">
+                            <table class="table table-government mb-0">
+                                <thead>
                                     <tr>
-                                        <td class="text-center font-weight-bold">
-                                            {{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}
-                                        </td>
-                                        <td>
-                                            <div class="product-info">
-                                                <div class="product-name">{{ strtoupper($bidding['title']) }}</div>
-                                                <div class="product-code">
-                                                    Kod: BID{{ str_pad($bidding['id'], 4, '0', STR_PAD_LEFT) }}
+                                        <th class="text-center" style="width: 8%;">NO.</th>
+                                        <th style="width: 25%;">PRODUCT NAME</th>
+                                        <th class="text-center" style="width: 18%;">START DATE</th>
+                                        <th class="text-center" style="width: 18%;">END DATE</th>
+                                        <th class="text-center" style="width: 15%;">STATUS</th>
+                                        <th class="text-center" style="width: 16%;">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{-- Menggunakan data sebenar dari controller --}}
+                                    @forelse($biddings as $index => $bidding)
+                                        @php
+                                            $now = \Carbon\Carbon::now();
+                                            // Ambil tarikh dan masa mula dari lajur 'date'
+                                            // Asumsi 'date' adalah objek Carbon atau boleh di-parse
+                                            $start = \Carbon\Carbon::parse($bidding->date);
+                                            // Gunakan kaedah endTime() dari Listing Model untuk mendapatkan tarikh tamat
+                                            $end = $bidding->endTime();
+                                            $statusClass = '';
+                                            $statusText = '';
+                                            $statusIcon = '';
+                                            if ($now->lt($start)) {
+                                                $statusClass = 'status-pending';
+                                                $statusText = 'PENDING';
+                                                $statusIcon = 'fas fa-clock';
+                                            } elseif ($now->between($start, $end)) {
+                                                $statusClass = 'status-ongoing';
+                                                $statusText = 'ONGOING';
+                                                $statusIcon = 'fas fa-play-circle';
+                                            } else {
+                                                $statusClass = 'status-ended';
+                                                $statusText = 'COMPLETED';
+                                                $statusIcon = 'fas fa-check-circle';
+                                            }
+                                        @endphp
+
+                                        <tr>
+                                            <td class="text-center font-weight-bold">
+                                                {{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}
+                                            </td>
+                                            <td>
+                                                <div class="product-info">
+                                                    {{-- Gunakan lajur 'item' untuk nama produk --}}
+                                                    <div class="product-name">{{ strtoupper($bidding->item) }}</div>
+                                                    <div class="product-code">
+                                                        {{-- Gunakan 'id' untuk kod produk --}}
+                                                        Code: BID{{ str_pad($bidding->id, 4, '0', STR_PAD_LEFT) }}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="date-info">
-                                                <div class="date-main">{{ $start->format('d/m/Y') }}</div>
-                                                <div class="date-time">{{ $start->format('H:i') }}</div>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="date-info">
-                                                <div class="date-main">{{ $end->format('d/m/Y') }}</div>
-                                                <div class="date-time">{{ $end->format('H:i') }}</div>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="status-badge {{ $statusClass }}">
-                                                <i class="{{ $statusIcon }}"></i>
-                                                <span>{{ $statusText }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="{{ route('admin.bidding.show', $bidding['id']) }}" 
-                                               class="btn btn-government btn-sm">
-                                                <i class="fas fa-eye me-1"></i>
-                                                LIHAT
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center no-data">
-                                            <div class="no-data-content">
-                                                <i class="fas fa-inbox fa-2x mb-2"></i>
-                                                <div>TIADA REKOD BIDAAN DIJUMPAI</div>
-                                                <small class="text-muted">Sila hubungi pentadbir sistem untuk maklumat lanjut</small>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Information -->
-            <div class="footer-info mt-4">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="info-box">
-                            <h6 class="info-title">NOTA PENTING:</h6>
-                            <ul class="info-list">
-                                <li>Semua masa yang dipaparkan adalah mengikut Waktu Malaysia (GMT +8)</li>
-                                <li>Status bidaan dikemaskini secara automatik mengikut masa sistem</li>
-                                <li>Untuk sebarang pertanyaan, sila hubungi Unit IT</li>
-                            </ul>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="date-info">
+                                                    {{-- Paparkan tarikh mula dari lajur 'date' --}}
+                                                    <div class="date-main">{{ $start->format('d/m/Y') }}</div>
+                                                    <div class="date-time">{{ $start->format('H:i') }}</div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="date-info">
+                                                    {{-- Paparkan tarikh tamat dari kaedah endTime() --}}
+                                                    <div class="date-main">{{ $end->format('d/m/Y') }}</div>
+                                                    <div class="date-time">{{ $end->format('H:i') }}</div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="status-badge {{ $statusClass }}">
+                                                    <i class="{{ $statusIcon }}"></i>
+                                                    <span>{{ $statusText }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                {{-- Gunakan 'id' untuk pautan 'view' --}}
+                                                <a href="{{ route('admin.bidding.show', $bidding->id) }}"
+                                                    class="btn btn-government btn-sm">
+                                                    <i class="fas fa-eye me-1"></i>
+                                                    VIEW
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center no-data">
+                                                <div class="no-data-content">
+                                                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                                                    <div>NO BIDDING RECORDS FOUND</div>
+                                                    <small class="text-muted">Please contact the system administrator for
+                                                        more information</small>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="info-box">
-                            <h6 class="info-title">MAKLUMAT SISTEM:</h6>
-                            <div class="system-info">
-                                <div class="system-item">
-                                    <span class="label">Versi Sistem:</span>
-                                    <span class="value">v2.1.0</span>
-                                </div>
-                                <div class="system-item">
-                                    <span class="label">Kemaskini Terakhir:</span>
-                                    <span class="value">{{ date('d/m/Y H:i') }}</span>
+                </div>
+
+                <div class="footer-info mt-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <h6 class="info-title">IMPORTANT NOTES:</h6>
+                                <ul class="info-list">
+                                    <li>All times displayed are in Malaysian Time (GMT +8)</li>
+                                    <li>Bidding status is updated automatically according to the system time</li>
+                                    <li>For any inquiries, please contact the IT Unit</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-box">
+                                <h6 class="info-title">SYSTEM INFORMATION:</h6>
+                                <div class="system-info">
+                                    <div class="system-item">
+                                        <span class="label">System Version:</span>
+                                        <span class="value">v2.1.0</span>
+                                    </div>
+                                    <div class="system-item">
+                                        <span class="label">Last Updated:</span>
+                                        <span class="value">{{ date('d/m/Y H:i') }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -193,406 +187,416 @@
             </div>
         </div>
     </div>
-</div>
 
-<style>
-/* Government Official Style */
-body {
-    font-family: 'Times New Roman', serif;
-    background-color: #f5f5f5;
-}
+    <style>
+        /* Government Official Style */
+        body {
+            font-family: 'Times New Roman', serif;
+            background-color: #f5f5f5;
+        }
 
-.official-header {
-    background: linear-gradient(135deg, #CD853F 0%, #DAA520 100%);
-    color: white;
-    padding: 25px;
-    border-radius: 0;
-    margin: -15px -15px 20px -15px;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-}
+        .official-header {
+            background: linear-gradient(135deg, #CD853F 0%, #DAA520 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 0;
+            margin: -15px -15px 20px -15px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
 
-.page-title {
-    font-size: 32px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-}
+        .page-title {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
 
-.subtitle {
-    font-size: 15px;
-    opacity: 0.9;
-    margin-bottom: 10px;
-}
+        .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
 
-.subtitle .label {
-    font-weight: normal;
-}
+        .subtitle .label {
+            font-weight: normal;
+        }
 
-.subtitle .value {
-    font-weight: bold;
-    margin-left: 10px;
-}
+        .subtitle .value {
+            font-weight: bold;
+            margin-left: 10px;
+        }
 
-.custom-breadcrumb {
-    background: transparent;
-    padding: 0;
-    margin: 0;
-}
+        .custom-breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 0;
+        }
 
-.custom-breadcrumb .breadcrumb-item a {
-    color: rgba(255,255,255,0.8);
-    text-decoration: none;
-}
+        .custom-breadcrumb .breadcrumb-item a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
 
-.custom-breadcrumb .breadcrumb-item.active {
-    color: white;
-}
+        .custom-breadcrumb .breadcrumb-item.active {
+            color: white;
+        }
 
-.header-stats {
-    text-align: right;
-}
+        .header-stats {
+            text-align: right;
+        }
 
-.stat-item {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-}
+        .stat-item {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
 
-.stat-label {
-    opacity: 0.8;
-}
+        .stat-label {
+            opacity: 0.8;
+        }
 
-.stat-value {
-    font-weight: bold;
-    margin-left: 10px;
-}
+        .stat-value {
+            font-weight: bold;
+            margin-left: 10px;
+        }
 
-/* Statistics Cards */
-.stats-card {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    transition: transform 0.2s ease;
-}
+        /* Statistics Cards */
+        .stats-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease;
+        }
 
-.stats-card:hover {
-    transform: translateY(-2px);
-}
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
 
-.stats-icon {
-    font-size: 2.5rem;
-    margin-right: 20px;
-    width: 60px;
-    text-align: center;
-}
+        .stats-icon {
+            font-size: 2.5rem;
+            margin-right: 20px;
+            width: 60px;
+            text-align: center;
+        }
 
-.stats-total .stats-icon { color: #CD853F; }
-.stats-pending .stats-icon { color: #ffc107; }
-.stats-ongoing .stats-icon { color: #28a745; }
-.stats-ended .stats-icon { color: #dc3545; }
+        .stats-total .stats-icon {
+            color: #CD853F;
+        }
 
-.stats-content {
-    flex: 1;
-}
+        .stats-pending .stats-icon {
+            color: #ffc107;
+        }
 
-.stats-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #495057;
-    line-height: 1;
-}
+        .stats-ongoing .stats-icon {
+            color: #28a745;
+        }
 
-.stats-label {
-    font-size: 13px;
-    font-weight: bold;
-    color: #6c757d;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 5px;
-}
+        .stats-ended .stats-icon {
+            color: #dc3545;
+        }
 
-/* Official Section */
-.official-section {
-    background: white;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-}
+        .stats-content {
+            flex: 1;
+        }
 
-.section-header {
-    background: #f8f9fa;
-    border-bottom: 3px solid #CD853F;
-    padding: 20px 25px;
-}
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #495057;
+            line-height: 1;
+        }
 
-.section-title {
-    font-size: 20px;
-    font-weight: bold;
-    color: #CD853F;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+        .stats-label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 5px;
+        }
 
-.table-info {
-    font-size: 14px;
-}
+        /* Official Section */
+        .official-section {
+            background: white;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
 
-.info-label {
-    color: #6c757d;
-}
+        .section-header {
+            background: #f8f9fa;
+            border-bottom: 3px solid #CD853F;
+            padding: 20px 25px;
+        }
 
-.info-value {
-    font-weight: bold;
-    color: #CD853F;
-    margin-left: 10px;
-}
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #CD853F;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-.section-content {
-    padding: 0;
-}
+        .table-info {
+            font-size: 14px;
+        }
 
-/* Government Table */
-.table-container {
-    overflow-x: auto;
-}
+        .info-label {
+            color: #6c757d;
+        }
 
-.table-government {
-    margin: 0;
-}
+        .info-value {
+            font-weight: bold;
+            color: #CD853F;
+            margin-left: 10px;
+        }
 
-.table-government thead th {
-    background: #CD853F;
-    color: white;
-    border: 1px solid #B8860B;
-    padding: 15px 12px;
-    font-weight: bold;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    vertical-align: middle;
-}
+        .section-content {
+            padding: 0;
+        }
 
-.table-government tbody td {
-    padding: 15px 12px;
-    border: 1px solid #dee2e6;
-    vertical-align: middle;
-    background: white;
-}
+        /* Government Table */
+        .table-container {
+            overflow-x: auto;
+        }
 
-.table-government tbody tr:nth-child(even) td {
-    background: #f8f9fa;
-}
+        .table-government {
+            margin: 0;
+        }
 
-.table-government tbody tr:hover td {
-    background: #e3f2fd;
-}
+        .table-government thead th {
+            background: #CD853F;
+            color: white;
+            border: 1px solid #B8860B;
+            padding: 15px 12px;
+            font-weight: bold;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
 
-.product-info {
-    text-align: left;
-}
+        .table-government tbody td {
+            padding: 15px 12px;
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+            background: white;
+        }
 
-.product-name {
-    font-weight: bold;
-    color: #495057;
-    font-size: 14px;
-    margin-bottom: 4px;
-}
+        .table-government tbody tr:nth-child(even) td {
+            background: #f8f9fa;
+        }
 
-.product-code {
-    font-size: 12px;
-    color: #6c757d;
-    font-style: italic;
-}
+        .table-government tbody tr:hover td {
+            background: #e3f2fd;
+        }
 
-.date-info {
-    text-align: center;
-}
+        .product-info {
+            text-align: left;
+        }
 
-.date-main {
-    font-weight: bold;
-    color: #495057;
-    font-size: 13px;
-}
+        .product-name {
+            font-weight: bold;
+            color: #495057;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
 
-.date-time {
-    font-size: 12px;
-    color: #6c757d;
-    margin-top: 2px;
-}
+        .product-code {
+            font-size: 12px;
+            color: #6c757d;
+            font-style: italic;
+        }
 
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+        .date-info {
+            text-align: center;
+        }
 
-.status-badge i {
-    margin-right: 6px;
-    font-size: 12px;
-}
+        .date-main {
+            font-weight: bold;
+            color: #495057;
+            font-size: 13px;
+        }
 
-.status-pending {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-}
+        .date-time {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
 
-.status-ongoing {
-    background: #d1e7dd;
-    color: #0f5132;
-    border: 1px solid #badbcc;
-}
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-.status-ended {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f1aeb5;
-}
+        .status-badge i {
+            margin-right: 6px;
+            font-size: 12px;
+        }
 
-.btn-government {
-    background: #CD853F;
-    color: white;
-    border: 1px solid #CD853F;
-    border-radius: 4px;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.2s ease;
-}
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
 
-.btn-government:hover {
-    background: #DAA520;
-    color: white;
-    transform: translateY(-1px);
-}
+        .status-ongoing {
+            background: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
 
-.no-data {
-    padding: 50px 20px;
-    background: #f8f9fa;
-}
+        .status-ended {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f1aeb5;
+        }
 
-.no-data-content {
-    color: #6c757d;
-}
+        .btn-government {
+            background: #CD853F;
+            color: white;
+            border: 1px solid #CD853F;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
 
-.no-data-content i {
-    opacity: 0.5;
-}
+        .btn-government:hover {
+            background: #DAA520;
+            color: white;
+            transform: translateY(-1px);
+        }
 
-/* Footer Information */
-.footer-info {
-    margin-top: 30px;
-}
+        .no-data {
+            padding: 50px 20px;
+            background: #f8f9fa;
+        }
 
-.info-box {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
+        .no-data-content {
+            color: #6c757d;
+        }
 
-.info-title {
-    font-weight: bold;
-    color: #CD853F;
-    text-transform: uppercase;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #CD853F;
-    padding-bottom: 5px;
-}
+        .no-data-content i {
+            opacity: 0.5;
+        }
 
-.info-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+        /* Footer Information */
+        .footer-info {
+            margin-top: 30px;
+        }
 
-.info-list li {
-    padding: 5px 0;
-    font-size: 13px;
-    color: #495057;
-    border-bottom: 1px dotted #dee2e6;
-}
+        .info-box {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
 
-.info-list li:last-child {
-    border-bottom: none;
-}
+        .info-title {
+            font-weight: bold;
+            color: #CD853F;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #CD853F;
+            padding-bottom: 5px;
+        }
 
-.info-list li:before {
-    content: "→";
-    color: #CD853F;
-    margin-right: 8px;
-    font-weight: bold;
-}
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-.system-info {
-    font-size: 13px;
-}
+        .info-list li {
+            padding: 5px 0;
+            font-size: 13px;
+            color: #495057;
+            border-bottom: 1px dotted #dee2e6;
+        }
 
-.system-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px dotted #dee2e6;
-}
+        .info-list li:last-child {
+            border-bottom: none;
+        }
 
-.system-item:last-child {
-    border-bottom: none;
-}
+        .info-list li:before {
+            content: "→";
+            color: #CD853F;
+            margin-right: 8px;
+            font-weight: bold;
+        }
 
-.system-item .label {
-    color: #6c757d;
-}
+        .system-info {
+            font-size: 13px;
+        }
 
-.system-item .value {
-    font-weight: bold;
-    color: #495057;
-}
+        .system-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dotted #dee2e6;
+        }
 
-@media print {
-    .official-header {
-        background: #CD853F !important;
-        -webkit-print-color-adjust: exact;
-    }
-    
-    .stats-card {
-        break-inside: avoid;
-    }
-}
+        .system-item:last-child {
+            border-bottom: none;
+        }
 
-@media (max-width: 768px) {
-    .page-title {
-        font-size: 24px;
-    }
-    
-    .stats-card {
-        margin-bottom: 15px;
-    }
-    
-    .stats-icon {
-        font-size: 2rem;
-        margin-right: 15px;
-        width: 50px;
-    }
-    
-    .stats-number {
-        font-size: 2rem;
-    }
-}
-</style>
+        .system-item .label {
+            color: #6c757d;
+        }
+
+        .system-item .value {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        @media print {
+            .official-header {
+                background: #CD853F !important;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .stats-card {
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 24px;
+            }
+
+            .stats-card {
+                margin-bottom: 15px;
+            }
+
+            .stats-icon {
+                font-size: 2rem;
+                margin-right: 15px;
+                width: 50px;
+            }
+
+            .stats-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
 @endsection
