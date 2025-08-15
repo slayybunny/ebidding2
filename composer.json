@@ -7,11 +7,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-<<<<<<< HEAD
         "jenssegers/agent": "^2.6",
-=======
         "guzzlehttp/guzzle": "^7.9",
->>>>>>> e6590236f30c79f238512e696cf642104ef3cc43
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "twilio/sdk": "^8.6"

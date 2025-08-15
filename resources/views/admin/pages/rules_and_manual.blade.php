@@ -1,29 +1,81 @@
 @extends('layouts.admin.app')
 
-@section('page-title', 'RULES & USER MANUAL')
+@section('page-title', 'Peraturan & Manual Pengguna')
 
 @section('content')
 <div class="container py-4">
-    <div class="border bg-white rounded p-4 shadow-sm">
-        <h4 class="mb-3 fw-bold text-dark">Peraturan Sistem eBidding</h4>
-        <ol class="mb-4 ps-3">
-            <li class="mb-2">Hanya pengguna yang berdaftar dibenarkan menyertai proses bidaan.</li>
-            <li class="mb-2">Setiap bidaan adalah muktamad. Tiada penarikan balik selepas dihantar.</li>
-            <li class="mb-2">Pengguna perlu memastikan baki akaun mencukupi sebelum membida.</li>
-            <li class="mb-2">Bidaan yang mengelirukan atau palsu akan dibatalkan serta-merta.</li>
-            <li class="mb-2">Pihak pentadbir berhak membatalkan sebarang bidaan atas sebab munasabah.</li>
+    {{-- Breadcrumbs for navigation, essential for user orientation --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light p-3 rounded">
+            <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-dark">Dashboard</a></li>
+            <li class="breadcrumb-item active text-secondary" aria-current="page">Peraturan & Manual Pengguna</li>
         </ol>
+    </nav>
+    
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-5">
+            {{-- Section: Peraturan Sistem eBidding --}}
+            <h4 class="mb-3 fw-bold text-dark border-bottom pb-2">Peraturan Sistem eBidding</h4>
+            <ol class="list-unstyled mb-4 text-muted">
+                <li class="d-flex align-items-start mb-2">
+                    <span class="badge bg-primary text-white me-2 mt-1">1</span>
+                    Hanya pengguna yang berdaftar dibenarkan menyertai proses bidaan.
+                </li>
+                <li class="d-flex align-items-start mb-2">
+                    <span class="badge bg-primary text-white me-2 mt-1">2</span>
+                    Setiap bidaan adalah muktamad. Tiada penarikan balik selepas dihantar.
+                </li>
+                <li class="d-flex align-items-start mb-2">
+                    <span class="badge bg-primary text-white me-2 mt-1">3</span>
+                    Pengguna perlu memastikan baki akaun mencukupi sebelum membida.
+                </li>
+                <li class="d-flex align-items-start mb-2">
+                    <span class="badge bg-primary text-white me-2 mt-1">4</span>
+                    Bidaan yang mengelirukan atau palsu akan dibatalkan serta-merta.
+                </li>
+                <li class="d-flex align-items-start mb-2">
+                    <span class="badge bg-primary text-white me-2 mt-1">5</span>
+                    Pihak pentadbir berhak membatalkan sebarang bidaan atas sebab munasabah.
+                </li>
+            </ol>
 
-        <hr>
+            <hr class="my-5">
 
-        <h4 class="mt-4 mb-3 fw-bold text-dark">Manual Pengguna</h4>
-        <ol class="ps-3">
-            <li class="mb-2"><strong>Log Masuk:</strong> Masukkan emel dan kata laluan pada halaman log masuk sistem.</li>
-            <li class="mb-2"><strong>Akses Bidaan:</strong> Klik menu “Bidding Platform” untuk melihat bidaan aktif.</li>
-            <li class="mb-2"><strong>Hantar Bidaan:</strong> Pilih bidaan dan masukkan amaun bidaan anda.</li>
-            <li class="mb-2"><strong>Semakan Bidaan:</strong> Lihat sejarah bidaan melalui menu “Bidding History”.</li>
-            <li class="mb-2"><strong>Kemaskini Profil:</strong> Ubah maklumat peribadi serta gambar profil di halaman “Profile”.</li>
-        </ol>
+            {{-- Section: Manual Pengguna --}}
+            <h4 class="mt-4 mb-3 fw-bold text-dark border-bottom pb-2">Manual Pengguna</h4>
+            <ol class="list-unstyled text-muted">
+                <li class="d-flex align-items-start mb-3">
+                    <span class="badge bg-primary text-white me-2 mt-1">1</span>
+                    <div>
+                        <strong class="text-dark">Log Masuk:</strong> Masukkan emel dan kata laluan pada halaman log masuk sistem.
+                    </div>
+                </li>
+                <li class="d-flex align-items-start mb-3">
+                    <span class="badge bg-primary text-white me-2 mt-1">2</span>
+                    <div>
+                        <strong class="text-dark">Akses Bidaan:</strong> Klik menu “Bidding Platform” untuk melihat bidaan aktif.
+                    </div>
+                </li>
+                <li class="d-flex align-items-start mb-3">
+                    <span class="badge bg-primary text-white me-2 mt-1">3</span>
+                    <div>
+                        <strong class="text-dark">Hantar Bidaan:</strong> Pilih bidaan dan masukkan amaun bidaan anda.
+                    </div>
+                </li>
+                <li class="d-flex align-items-start mb-3">
+                    <span class="badge bg-primary text-white me-2 mt-1">4</span>
+                    <div>
+                        <strong class="text-dark">Semakan Bidaan:</strong> Lihat sejarah bidaan melalui menu “Bidding History”.
+                    </div>
+                </li>
+                <li class="d-flex align-items-start mb-3">
+                    <span class="badge bg-primary text-white me-2 mt-1">5</span>
+                    <div>
+                        <strong class="text-dark">Kemaskini Profil:</strong> Ubah maklumat peribadi serta gambar profil di halaman “Profile”.
+                    </div>
+                </li>
+            </ol>
+        </div>
     </div>
 </div>
 @endsection
