@@ -29,7 +29,7 @@
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Time:</span>
-                            <span class="stat-value">{{ date('H:i') }}</span>
+                            <span class="stat-value" id="live-time"></span>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,6 @@
                             <div class="col-md-4 text-end">
                                 <div class="table-info">
                                     <span class="info-label">Total Records:</span>
-                                    {{-- Mengira rekod secara dinamik --}}
                                     <span class="info-value">{{ count($biddings) }}</span>
                                 </div>
                             </div>
@@ -67,18 +66,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- Menggunakan data sebenar dari controller --}}
                                     @forelse($biddings as $index => $bidding)
                                         @php
                                             $now = \Carbon\Carbon::now();
-                                            // Ambil tarikh dan masa mula dari lajur 'date'
-                                            // Asumsi 'date' adalah objek Carbon atau boleh di-parse
-                                            $start = \Carbon\Carbon::parse($bidding->date);
-                                            // Gunakan kaedah endTime() dari Listing Model untuk mendapatkan tarikh tamat
-                                            $end = $bidding->endTime();
-                                            $statusClass = '';
-                                            $statusText = '';
-                                            $statusIcon = '';
+                                            $start = \Carbon\Carbon::parse(
+                                                $bidding->start_date . ' ' . $bidding->start_time,
+                                            );
+                                            $end = \Carbon\Carbon::parse($bidding->end_date . ' ' . $bidding->end_time);
+
+                                            $statusClass = 'status-ended';
+                                            $statusText = 'COMPLETED';
+                                            $statusIcon = 'fas fa-check-circle';
+
                                             if ($now->lt($start)) {
                                                 $statusClass = 'status-pending';
                                                 $statusText = 'PENDING';
@@ -87,10 +86,6 @@
                                                 $statusClass = 'status-ongoing';
                                                 $statusText = 'ONGOING';
                                                 $statusIcon = 'fas fa-play-circle';
-                                            } else {
-                                                $statusClass = 'status-ended';
-                                                $statusText = 'COMPLETED';
-                                                $statusIcon = 'fas fa-check-circle';
                                             }
                                         @endphp
 
@@ -100,26 +95,27 @@
                                             </td>
                                             <td>
                                                 <div class="product-info">
-                                                    {{-- Gunakan lajur 'item' untuk nama produk --}}
                                                     <div class="product-name">{{ strtoupper($bidding->item) }}</div>
                                                     <div class="product-code">
-                                                        {{-- Gunakan 'id' untuk kod produk --}}
                                                         Code: BID{{ str_pad($bidding->id, 4, '0', STR_PAD_LEFT) }}
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="text-center">
                                                 <div class="date-info">
-                                                    {{-- Paparkan tarikh mula dari lajur 'date' --}}
                                                     <div class="date-main">{{ $start->format('d/m/Y') }}</div>
-                                                    <div class="date-time">{{ $start->format('H:i') }}</div>
+                                                    <div class="date-time">{{ $start->format('h:i A') }}</div>
                                                 </div>
                                             </td>
                                             <td class="text-center">
                                                 <div class="date-info">
-                                                    {{-- Paparkan tarikh tamat dari kaedah endTime() --}}
-                                                    <div class="date-main">{{ $end->format('d/m/Y') }}</div>
-                                                    <div class="date-time">{{ $end->format('H:i') }}</div>
+                                                    @if ($end)
+                                                        <div class="date-main">{{ $end->format('d/m/Y') }}</div>
+                                                        <div class="date-time">{{ $end->format('h:i A') }}</div>
+                                                    @else
+                                                        <div class="date-main text-muted">N/A</div>
+                                                        <div class="date-time text-muted">N/A</div>
+                                                    @endif
                                                 </div>
                                             </td>
                                             <td class="text-center">
@@ -129,12 +125,22 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                {{-- Gunakan 'id' untuk pautan 'view' --}}
-                                                <a href="{{ route('admin.bidding.show', $bidding->id) }}"
-                                                    class="btn btn-government btn-sm">
-                                                    <i class="fas fa-eye me-1"></i>
-                                                    VIEW
-                                                </a>
+                                                <div class="d-flex justify-content-center">
+                                                    <a href="{{ route('admin.bidding.show', $bidding->id) }}"
+                                                        class="btn btn-government btn-sm me-2">
+                                                        <i class="fas fa-eye me-1"></i> VIEW
+                                                    </a>
+
+                                                    <form action="{{ route('admin.bidding.destroy', $bidding->id) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Adakah anda pasti mahu memadam rekod ini? Ini tidak boleh dikembalikan!');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="fas fa-trash-alt me-1"></i> DELETE
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -189,7 +195,6 @@
     </div>
 
     <style>
-        /* Government Official Style */
         body {
             font-family: 'Times New Roman', serif;
             background-color: #f5f5f5;
@@ -261,7 +266,6 @@
             margin-left: 10px;
         }
 
-        /* Statistics Cards */
         .stats-card {
             background: white;
             border: 1px solid #dee2e6;
@@ -321,7 +325,6 @@
             margin-top: 5px;
         }
 
-        /* Official Section */
         .official-section {
             background: white;
             border: 1px solid #dee2e6;
@@ -361,7 +364,6 @@
             padding: 0;
         }
 
-        /* Government Table */
         .table-container {
             overflow-x: auto;
         }
@@ -496,7 +498,6 @@
             opacity: 0.5;
         }
 
-        /* Footer Information */
         .footer-info {
             margin-top: 30px;
         }
@@ -599,4 +600,21 @@
             }
         }
     </style>
+
+    <script>
+        function updateLiveTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const formattedTime = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+            document.getElementById('live-time').innerText = formattedTime;
+        }
+
+        setInterval(updateLiveTime, 1000);
+        updateLiveTime();
+    </script>
 @endsection

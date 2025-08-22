@@ -4,30 +4,31 @@
 @section('page-title', 'Detailed Bidding Information')
 
 @section('styles')
-<style>
-    /* CSS tersuai untuk warna kelabu gelap */
-    .bg-dark-grey {
-        background-color: #212529 !important; /* Warna kelabu gelap */
-        color: #fff;
-    }
+    <style>
+        /* CSS tersuai untuk warna kelabu gelap */
+        .bg-dark-grey {
+            background-color: #212529 !important;
+            /* Warna kelabu gelap */
+            color: #fff;
+        }
 
-    /* CSS tambahan untuk header rasmi */
-    .official-header {
-        background: #212529 !important;
-        color: #fff;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-    }
-    
-    .breadcrumb a,
-    .breadcrumb-item.active {
-        color: #fff !important;
-    }
+        /* CSS tambahan untuk header rasmi */
+        .official-header {
+            background: #212529 !important;
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
 
-    .card-header.bg-info {
-        background-color: #212529 !important;
-    }
-</style>
+        .breadcrumb a,
+        .breadcrumb-item.active {
+            color: #fff !important;
+        }
+
+        .card-header.bg-info {
+            background-color: #212529 !important;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -100,15 +101,15 @@
                             <li><span class="label">Description:</span> <span class="value">{{ $bidding->info }}</span>
                             </li>
                             <li><span class="label">Starting Price:</span> <span class="value">RM
-                                        {{ number_format($bidding->price, 2) }}</span></li>
+                                    {{ number_format($bidding->price, 2) }}</span></li>
                             <li><span class="label">Start Date:</span> <span
-                                        class="value">{{ \Carbon\Carbon::parse($bidding->created_at)->format('d M Y, H:i:s') }}</span>
+                                    class="value">{{ \Carbon\Carbon::parse($bidding->created_at)->format('d M Y, H:i:s') }}</span>
                             </li>
                             <li><span class="label">End Date:</span> <span
-                                        class="value">{{ \Carbon\Carbon::parse($bidding->end_time)->format('d M Y, H:i:s') }}</span>
+                                    class="value">{{ \Carbon\Carbon::parse($bidding->end_time)->format('d M Y, H:i:s') }}</span>
                             </li>
                             <li><span class="label">Total Bidders:</span> <span
-                                        class="value">{{ $bidding->bids->count() }}</span></li>
+                                    class="value">{{ $bidding->bids->count() }}</span></li>
                         </ul>
                     </div>
                 </div>
@@ -121,32 +122,44 @@
                         <h4 class="mb-0">Bidding Status</h4>
                     </div>
                     <div class="card-body system-info">
+                        @php
+                            $now = \Carbon\Carbon::now();
+                            $start = \Carbon\Carbon::parse($bidding->start_date . ' ' . $bidding->start_time);
+                            $end = \Carbon\Carbon::parse($bidding->end_date . ' ' . $bidding->end_time);
+
+                            if ($now->lt($start)) {
+                                $statusClass = 'status-pending';
+                                $statusText = 'PENDING';
+                            } elseif ($now->between($start, $end)) {
+                                $statusClass = 'status-ongoing';
+                                $statusText = 'ONGOING';
+                            } else {
+                                $statusClass = 'status-ended';
+                                $statusText = 'COMPLETED';
+                            }
+
+                            $highestBid = $bidding->bids->sortByDesc('bid_price')->first();
+                        @endphp
                         <div class="system-item">
                             <span class="label">Bidding Status:</span>
                             <span class="value">
-                                @if (\Carbon\Carbon::parse($bidding->end_time)->isFuture())
-                                    <span class="badge bg-success">Ongoing</span>
-                                @else
-                                    <span class="badge bg-danger">Ended</span>
-                                @endif
+                                <div class="status-badge {{ $statusClass }}">
+                                    <span>{{ $statusText }}</span>
+                                </div>
                             </span>
                         </div>
                         <div class="system-item">
                             <span class="label">Highest Bid:</span>
                             <span class="value">RM
-                                {{ number_format($bidding->bids->max('bid_price') ?? $bidding->price, 2) }}</span>
+                                {{ number_format($highestBid->bid_price ?? $bidding->price, 2) }}</span>
                         </div>
                         <div class="system-item">
                             <span class="label">Highest Bidder:</span>
                             <span class="value">
-                                @if ($bidding->status === 'COMPLETED')
-                                    {{ $winner->name ?? 'N/A' }}
+                                @if ($highestBid && $highestBid->member)
+                                    {{ $highestBid->member->name }}
                                 @else
-                                    @php
-                                        $highestBid = $bidding->bids->sortByDesc('bid_price')->first();
-                                    @endphp
-                                    {{-- Mengubah dari $highestBid->user kepada $highestBid->member --}}
-                                    {{ $highestBid && $highestBid->member ? $highestBid->member->name : 'No bidders yet' }}
+                                    No bidders yet
                                 @endif
                             </span>
                         </div>
@@ -158,12 +171,12 @@
             @if ($bidding->bids->count() > 0)
                 <div class="col-12 mb-4">
                     <div class="card shadow-sm">
-                    <div class="card-header bg-black text-white">
+                        <div class="card-header bg-black text-white">
                             <h4 class="mb-0">List of Bidders</h4>
                         </div>
                         <div class="card-body">
                             <ul class="info-list">
-                                @foreach($bidding->bids->sortByDesc('bid_price') as $bid)
+                                @foreach ($bidding->bids->sortByDesc('bid_price') as $bid)
                                     <li>
                                         <span class="label">Bidder Name:</span>
                                         {{-- Mengubah dari $bid->user kepada $bid->member --}}

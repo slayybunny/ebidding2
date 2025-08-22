@@ -22,7 +22,7 @@ class AdminController extends Controller
 
         // Mengambil 5 lelongan terkini dengan data ahli
         $recentAuctions = Listing::with('member')
-            ->orderBy('date', 'desc')
+            ->orderBy('created_at', 'desc') // ✨ Ini adalah perbaikan pertama ✨
             ->limit(5)
             ->get()
             ->map(function ($listing) {
