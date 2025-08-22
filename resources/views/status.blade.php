@@ -30,7 +30,12 @@
                         <h3 class="text-lg font-semibold text-gray-800">{{ $listing->item }}</h3>
                         <p class="text-sm text-gray-500">{{ $listing->type }}</p>
                         <p class="text-sm text-gray-500">
-                            Ended: {{ \Carbon\Carbon::parse($listing->date)->addMinutes($listing->duration)->format('d M Y h:i A') }}
+                            @php
+                                $startDate = \Carbon\Carbon::parse($listing->date);
+                                $durationMinutes = $listing->duration ?? 0; // fallback ke 0 jika kosong
+                                $endDate = $startDate->copy()->addMinutes($durationMinutes);
+                            @endphp
+                            Ended: {{ $endDate->format('d M Y h:i A') }}
                         </p>
                     </div>
                     <div class="mt-4 md:mt-0 text-right">
@@ -51,16 +56,15 @@
                                 @if(isset($listing->is_paid) && !$listing->is_paid)
                                     <div class="mt-2">
                                         <a href="{{ route('payment.create', $listing->id) }}"
-                                        class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded">
+                                           class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded">
                                             💰 Pay Now (RM {{ number_format($userBid->bid_price, 2) }})
                                         </a>
                                     </div>
-                            {{-- Jika sudah bayar --}}
-                            @elseif(isset($listing->is_paid) && $listing->is_paid)
-                                <div class="mt-2 text-green-700 font-semibold">
-                                    ✅ Successfully Paid
-                                </div>
-
+                                {{-- Jika sudah bayar --}}
+                                @elseif(isset($listing->is_paid) && $listing->is_paid)
+                                    <div class="mt-2 text-green-700 font-semibold">
+                                        ✅ Successfully Paid
+                                    </div>
                                 {{-- Jika pembayaran gagal --}}
                                 @elseif(isset($listing->is_paid) && $listing->is_paid === false && isset($listing->payment_attempted))
                                     <div class="mt-2 text-red-700 font-semibold">

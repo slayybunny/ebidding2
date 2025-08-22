@@ -1,9 +1,7 @@
-{{-- resources/views/tender/winner-transactions.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
 @php
-    // fallback kalau variable datang namanya lain (mengelakkan "Undefined variable")
     $winnerTransactions = $winnerTransactions ?? ($transactions ?? collect());
 @endphp
 
@@ -42,7 +40,9 @@
                             <td class="px-4 py-3 text-gray-800">{{ $t->name }}</td>
                             <td class="px-4 py-3 text-gray-700 capitalize">{{ $t->type }}</td>
                             <td class="px-4 py-3 text-right text-green-600 font-semibold">RM {{ number_format($t->bid_price, 2) }}</td>
-                            <td class="px-4 py-3 text-gray-700">{{ \Carbon\Carbon::parse($t->date)->format('d M Y') }}</td>
+                            <td class="px-4 py-3 text-gray-700">
+                                {{ \Carbon\Carbon::parse($t->end_date ?? $t->created_at)->format('d M Y') }}
+                            </td>
                             <td class="px-4 py-3 text-gray-700">{{ $t->info ?? '-' }}</td>
                             <td class="px-4 py-3">
                                 @if($t->is_paid)
@@ -52,23 +52,16 @@
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-center">
-                                @if($t->is_paid && !empty($t->receipt_url))
-                                    {{-- if receipt_url is a full URL --}}
-                                    @php
-                                        $receipt = $t->receipt_url;
-                                        // if stored as relative storage path, convert to asset
-                                        if (!preg_match('/^https?:\/\//', $receipt) && file_exists(public_path('storage/' . $receipt))) {
-                                            $receipt = asset('storage/' . $receipt);
-                                        }
-                                    @endphp
+    @if($t->is_paid)
+        <a href="{{ route('winner.transactions.receipt', $t->bid_id) }}" target="_blank"
+            class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+            📄 View Receipt
+        </a>
+    @else
+        <span class="text-gray-400">No Receipt</span>
+    @endif
+</td>
 
-                                    <a href="{{ $receipt }}" target="_blank" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
-                                        📄 View Receipt
-                                    </a>
-                                @else
-                                    <span class="text-gray-400">No Receipt</span>
-                                @endif
-                            </td>
                         </tr>
                     @endforeach
                 </tbody>

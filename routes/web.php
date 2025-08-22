@@ -66,13 +66,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/delete-listing/{slug}', [ListingController::class, 'destroy'])->name('delete-listing');
 
         // BIDDING PAGES
-        Route::get('/bidding/{slug}', [BiddingController::class, 'showBySlug'])->name('bidding.detail');  // individual bidding page
-        Route::post('/bidding/place/{slug}', [BiddingController::class, 'placeBid'])->name('bidding.place'); // ✅ fixed route name
+        Route::get('/bidding/{slug}', [BiddingController::class, 'showBySlug'])->name('bidding.detail');
+        Route::post('/bidding/place/{slug}', [BiddingController::class, 'placeBid'])->name('bidding.place');
 
         // LISTING OVERVIEW
         Route::get('/tender/listing/overview', [ListingController::class, 'overview'])->name('listing-overview');
-
-
     });
 
     // LIVE BIDDING
@@ -82,6 +80,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/history', [BiddingController::class, 'history'])->name('bidding.history');
     Route::get('/status', [ListingController::class, 'status'])->middleware('auth')->name('status');
     Route::get('/winner', [ListingController::class, 'winner'])->name('winners');
+
+
 });
 
 Route::get('/payment/create/{id}', [ToyyibpayController::class, 'create'])->name('payment.create');
@@ -89,6 +89,9 @@ Route::get('/status', [ToyyibpayController::class, 'paymentStatus'])->name('paym
 Route::post('/payment/callback', [ToyyibpayController::class, 'callback'])->name('payment.callback');
 Route::get('/payment/redirect/{bidId}', [ToyyibpayController::class, 'redirectAfterPayment'])->name('payment.redirect');
 Route::get('/payment/receipt/{id}', [ToyyibpayController::class, 'receipt'])->name('payment.receipt');
+Route::get('/payment/fixed', [ToyyibpayController::class, 'fixedFeePayment'])->name('payment.fixed');
+Route::get('/payment/fixed/callback', [ToyyibpayController::class, 'fixedFeeCallback'])->name('payment.fixed.callback');
+
 
 // CANCEL BID
 Route::delete('/bids/{bidId}/cancel', [BiddingController::class, 'cancel'])->name('bid.cancel');
@@ -108,24 +111,10 @@ Route::get('/generate-slug', function () {
     return 'All slugs have been generated!';
 });
 
-Route::get('/fix-end-time', function () {
-    $listings = Listing::whereNull('end_time')->get();
-
-    foreach ($listings as $listing) {
-        if (!empty($listing->date) && !empty($listing->duration)) {
-            $listing->end_time = Carbon::parse($listing->date)->addMinutes($listing->duration);
-            $listing->save();
-        }
-    }
-
-    return "End time updated successfully!";
-});
-
 Route::get('/tender/winner-transactions', [WinnerTransactionController::class, 'index'])
     ->name('winner.transactions')
     ->middleware('auth');
 
-
-
-
-
+    // Route untuk view receipt
+Route::get('/winner/transactions/receipt/{bid}', [App\Http\Controllers\WinnerTransactionController::class, 'receipt'])
+    ->name('winner.transactions.receipt');

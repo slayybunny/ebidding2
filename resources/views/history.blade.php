@@ -12,7 +12,9 @@
                 <div class="border border-gray-300 p-6 rounded-lg shadow hover:shadow-lg transition">
                     @if($bid->listing)
                         @php
-                            $isExpired = \Carbon\Carbon::now()->greaterThanOrEqualTo(\Carbon\Carbon::parse($bid->listing->date)->addMinutes($bid->listing->duration));
+                            $start = \Carbon\Carbon::parse($bid->listing->start_date . ' ' . $bid->listing->start_time);
+                            $end   = \Carbon\Carbon::parse($bid->listing->end_date . ' ' . $bid->listing->end_time);
+                            $isExpired = \Carbon\Carbon::now()->greaterThanOrEqualTo($end);
                         @endphp
 
                         <img src="{{ asset($bid->listing->image) }}" alt="{{ $bid->listing->item }}" class="w-24 h-24 object-cover mx-auto mb-4">
@@ -21,6 +23,11 @@
                         <p class="text-center text-sm text-gray-500">{{ $bid->listing->type }}</p>
 
                         <p class="text-center font-bold mt-2">{{ $bid->listing->currency }} {{ number_format($bid->bid_price, 2) }}</p>
+
+                        <div class="text-center mt-2 text-sm text-gray-600">
+                            <span>Member ID: {{ $bid->member->id ?? $bid->member_id }}</span> |
+                            <span>Name: {{ $bid->member->name ?? 'N/A' }}</span>
+                        </div>
 
                         <div class="text-center mt-4">
                             @if ($isExpired)

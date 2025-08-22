@@ -39,59 +39,77 @@
             <tbody>
                 @forelse ($goldListings as $listing)
                     @php
-                       $start = \Carbon\Carbon::parse($listing->date); // start datetime
-$end = $start->copy()->addMinutes($listing->duration); // tambah duration dalam minutes
+                        // Gabungan date + time
+                        $start = $listing->start_date && $listing->start_time
+                            ? \Carbon\Carbon::parse($listing->start_date . ' ' . $listing->start_time)
+                            : null;
+
+                        $end = $listing->end_date && $listing->end_time
+                            ? \Carbon\Carbon::parse($listing->end_date . ' ' . $listing->end_time)
+                            : null;
 
                         $now = now();
-                        $isActive = $now->lt($end);
+                        $isActive = $start && $end ? $now->between($start, $end) : false;
                         $status = $isActive ? 'active' : 'unactive';
-
-                        $d = floor($listing->duration / 1440);
-                        $h = floor(($listing->duration % 1440) / 60);
-                        $m = $listing->duration % 60;
                     @endphp
 
-                 <tr>
-    <td class="py-1 px-3 border-b">{{ $listing->item }}</td>
-    <td class="py-1 px-3 border-b">{{ $listing->type }}</td>
-    <td class="py-1 px-3 border-b">{{ number_format($listing->price, 2) }}</td>
-    <td class="py-1 px-3 border-b">{{ number_format($listing->starting_price, 2) }}</td>
-    <td class="py-1 px-3 border-b">{{ $end->format('Y-m-d H:i') }}</td> <!-- corrected -->
-    <td class="py-1 px-3 border-b">{{ $d }}d {{ $h }}h {{ $m }}m</td>
-    <td class="py-1 px-3 border-b">{{ $listing->currency }}</td>
-    <td class="py-1 px-3 border-b">{{ $listing->info }}</td>
-    <td class="py-1 px-3 border-b">
-        @if ($listing->image)
-            <img src="{{ asset($listing->image) }}" alt="Gold Image" class="w-32 h-auto">
-        @else
-            <span class="text-gray-500 italic">No image</span>
-        @endif
-    </td>
-    <td class="py-1 px-3 border-b">
-        <span class="{{ $status === 'active' ? 'text-green-600' : 'text-red-600' }}">
-            {{ ucfirst($status) }}
-        </span>
-    </td>
-    <td class="py-1 px-3 border-b">{{ $listing->created_at->format('Y-m-d H:i') }}</td>
-    <td class="py-1 px-3 border-b">
-        <div class="flex space-x-2">
-            <a href="{{ route('edit-listing', $listing->slug) }}"
-               class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs">
-                Edit
-            </a>
-            <form action="{{ route('delete-listing', $listing->slug) }}" method="POST"
-                  onsubmit="return confirm('Are you sure to delete this listing?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit"
-                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">
-                    Delete
-                </button>
-            </form>
-        </div>
-    </td>
-</tr>
+                    <tr>
+                        <td class="py-1 px-3 border-b">{{ $listing->item }}</td>
+                        <td class="py-1 px-3 border-b">{{ $listing->type }}</td>
+                        <td class="py-1 px-3 border-b">{{ number_format($listing->price, 2) }}</td>
+                        <td class="py-1 px-3 border-b">{{ number_format($listing->starting_price, 2) }}</td>
 
+                        <!-- Date Ends -->
+                        <td class="py-1 px-3 border-b">
+                            @if($end)
+                                {{ $end->format('d/m/Y h:i A') }}
+                            @else
+                                -
+                            @endif
+                        </td>
+
+                        <!-- Duration (Start - End) -->
+                        <td class="py-1 px-3 border-b">
+                            @if($start && $end)
+                                {{ $start->format('d/m/Y h:i A') }} → {{ $end->format('d/m/Y h:i A') }}
+                            @else
+                                -
+                            @endif
+                        </td>
+
+                        <td class="py-1 px-3 border-b">{{ $listing->currency }}</td>
+                        <td class="py-1 px-3 border-b">{{ $listing->info }}</td>
+                        <td class="py-1 px-3 border-b">
+                            @if ($listing->image)
+                                <img src="{{ asset($listing->image) }}" alt="Gold Image" class="w-32 h-auto">
+                            @else
+                                <span class="text-gray-500 italic">No image</span>
+                            @endif
+                        </td>
+                        <td class="py-1 px-3 border-b">
+                            <span class="{{ $status === 'active' ? 'text-green-600' : 'text-red-600' }}">
+                                {{ ucfirst($status) }}
+                            </span>
+                        </td>
+                        <td class="py-1 px-3 border-b">{{ $listing->created_at->format('d/m/Y h:i A') }}</td>
+                        <td class="py-1 px-3 border-b">
+                            <div class="flex space-x-2">
+                                <a href="{{ route('edit-listing', $listing->slug) }}"
+                                   class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs">
+                                    Edit
+                                </a>
+                                <form action="{{ route('delete-listing', $listing->slug) }}" method="POST"
+                                      onsubmit="return confirm('Are you sure to delete this listing?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
                 @empty
                     <tr>
                         <td colspan="12" class="py-4 px-4 text-center text-gray-500">No listings found.</td>

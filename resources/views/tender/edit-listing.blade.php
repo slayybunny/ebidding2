@@ -1,45 +1,42 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 flex flex-col">
-    <div class="max-w-6xl mx-auto py-12 px-4">
-        <!-- Header Section -->
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mb-4 shadow-lg">
-                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+<div class="min-h-screen py-8 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <!-- Compact Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-xl mb-4 shadow-md">
+                <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>
-            <h1 class="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent mb-3">
-                Edit Gold Listing
-            </h1>
-            <p class="text-gray-600 text-lg">Edit your precious gold item details</p>
+            <h1 class="text-3xl font-bold text-gray-800">Edit Gold Listing</h1>
+            <p class="text-gray-600 text-sm mt-1">Professional precious metals auction platform</p>
         </div>
 
-        <!-- Success Message -->
+        <!-- Messages Section -->
         @if(session('success'))
-            <div class="mb-8 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-400 text-green-800 px-6 py-4 rounded-r-lg shadow-md animate-fade-in">
+            <div class="mb-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm shadow-sm">
                 <div class="flex items-center">
-                    <svg class="w-5 h-5 text-green-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
-                    <span class="font-medium">{{ session('success') }}</span>
+                    <span>{{ session('success') }}</span>
                 </div>
             </div>
         @endif
 
-        <!-- Error Messages -->
         @if($errors->any())
-            <div class="mb-8 bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-400 text-red-800 px-6 py-4 rounded-r-lg shadow-md">
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm shadow-sm">
                 <div class="flex items-start">
-                    <svg class="w-5 h-5 text-red-400 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4 text-red-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                     </svg>
                     <div>
-                        <h3 class="font-medium mb-2">Please fix the following errors:</h3>
-                        <ul class="list-disc list-inside space-y-1">
+                        <span class="font-medium">Please correct the following:</span>
+                        <ul class="list-disc list-inside mt-1 space-y-0.5">
                             @foreach($errors->all() as $error)
-                                <li class="text-sm">{{ $error }}</li>
+                                <li class="text-xs">{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -47,262 +44,181 @@
             </div>
         @endif
 
-        <!-- Main Form -->
-        <div class="bg-white rounded-2xl shadow-xl border border-yellow-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-yellow-400 to-orange-500 p-6">
-                <h2 class="text-xl font-semibold text-white flex items-center">
-                    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <!-- Main Form Card -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <!-- Form Header -->
+            <div class="bg-gradient-to-r from-amber-600 to-yellow-600 px-6 py-4">
+                <h2 class="text-lg font-semibold text-white flex items-center">
+                    <svg class="w-5 h-5 mr-2 opacity-90" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
                     </svg>
-                    Listing Details
+                    Item Edit Form
                 </h2>
             </div>
 
-            <form action="{{ route('update-listing', $listing->slug) }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-8">
+            <form action="{{ route('update-listing', $listing->slug) }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
                 @csrf
                 @method('PUT')
 
-                <!-- Item Name -->
-                <div class="group">
-                    <label class="block font-semibold text-gray-800 mb-3 flex items-center">
-                        <span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
-                        Item Name
-                    </label>
-                    <div class="relative">
+                <!-- Grid Layout for Form Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Item Name -->
+                    <div class="lg:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Item Name *</label>
                         <input type="text" name="item" value="{{ old('item', $listing->item) }}"
-                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300"
-                            placeholder="e.g., Elegant Gold Necklace" required>
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50"
+                            placeholder="Enter item name" required>
                     </div>
-                </div>
 
-                <!-- Type -->
-                <div class="group">
-                    <label class="block font-semibold text-gray-800 mb-3 flex items-center">
-                        <span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
-                        Type
-                    </label>
-                    <div class="relative">
-                        <input type="text" name="type" value="{{ old('type', $listing->type) }}"
-                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300"
-                            placeholder="e.g., Bar / Coin / Custom Item" required>
-                    </div>
-                </div>
-
-                <!-- Currency -->
-                <div class="group">
-                    <label class="block font-semibold text-gray-800 mb-3 flex items-center">
-                        <span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
-                        Currency
-                    </label>
-                    <div class="relative">
-                        <select name="currency"
-                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300 appearance-none"
-                            required>
-                            <option value="MYR" {{ old('currency', $listing->currency) == 'MYR' ? 'selected' : '' }}>🇲🇾 MYR - Malaysian Ringgit</option>
-                            <option value="IDR" {{ old('currency', $listing->currency) == 'IDR' ? 'selected' : '' }}>🇮🇩 IDR - Indonesian Rupiah</option>
+                    <!-- Type -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Type *</label>
+                        <select name="type" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50" required>
+                            <option value="" disabled>Select type</option>
+                            <option value="gold" {{ old('type', $listing->type) == 'gold' ? 'selected' : '' }}>Gold</option>
+                            <option value="silver" {{ old('type', $listing->type) == 'silver' ? 'selected' : '' }}>Silver</option>
+                            <option value="car" {{ old('type', $listing->type) == 'car' ? 'selected' : '' }}>Car</option>
+                            <option value="motor" {{ old('type', $listing->type) == 'motor' ? 'selected' : '' }}>Motor</option>
                         </select>
                     </div>
-                </div>
 
-                <!-- Price Grid -->
-                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Currency -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Currency *</label>
+                        <select name="currency" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50" required>
+                            <option value="MYR" {{ old('currency', $listing->currency) == 'MYR' ? 'selected' : '' }}>MYR - Malaysian Ringgit</option>
+                            <option value="IDR" {{ old('currency', $listing->currency) == 'IDR' ? 'selected' : '' }}>IDR - Indonesian Rupiah</option>
+                        </select>
+                    </div>
+
                     <!-- Price -->
-                    <div class="group">
-                        <label class="block font-semibold text-gray-800 mb-3 flex items-center">
-                            <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                            Price (per gram)
-                        </label>
-                        <div class="relative">
-                            <input type="number" name="price" step="0.01" value="{{ old('price', $listing->price) }}"
-                                class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 pl-8 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300"
-                                placeholder="300.00" required>
-                        </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Price *</label>
+                        <input type="number" name="price" step="0.01" value="{{ old('price', $listing->price) }}"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50"
+                            placeholder="0.00" required>
                     </div>
 
                     <!-- Starting Price -->
-                    <div class="group">
-                        <label class="block font-semibold text-gray-800 mb-3 flex items-center">
-                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
-                            Starting Bidding Price
-                        </label>
-                        <div class="relative">
-                            <input type="number" name="starting_price" step="0.01" value="{{ old('starting_price', $listing->starting_price) }}"
-                                class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 pl-8 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300"
-                                placeholder="250.00" required>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Starting Bid *</label>
+                        <input type="number" name="starting_price" step="0.01" value="{{ old('starting_price', $listing->starting_price) }}"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50"
+                            placeholder="0.00" required>
+                    </div>
+
+                    <!-- Bidding Start Date -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Bidding Start Date *</label>
+                        <input type="date" name="start_date"
+                            value="{{ old('start_date', $listing->start_date ? \Carbon\Carbon::parse($listing->start_date)->format('Y-m-d') : '') }}"
+                            min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50"
+                            required>
+                    </div>
+
+                    <!-- Bidding End Date -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Bidding End Date *</label>
+                        <input type="date" name="end_date"
+                            value="{{ old('end_date', $listing->end_date ? \Carbon\Carbon::parse($listing->end_date)->format('Y-m-d') : '') }}"
+                            min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50"
+                            required>
+                    </div>
+                </div>
+
+                <!-- Bidding Time Section -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Bidding Time *</label>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <input type="time" name="start_time" value="{{ old('start_time', $listing->start_time ? \Carbon\Carbon::parse($listing->start_time)->format('H:i') : '') }}"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50" required>
+                            <label class="block text-xs text-gray-500 text-center mt-2">Start Time</label>
+                        </div>
+                        <div>
+                            <input type="time" name="end_time" value="{{ old('end_time', $listing->end_time ? \Carbon\Carbon::parse($listing->end_time)->format('H:i') : '') }}"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50" required>
+                            <label class="block text-xs text-gray-500 text-center mt-2">End Time</label>
                         </div>
                     </div>
                 </div>
 
-              @php
-    $today = \Carbon\Carbon::today();
-    $maxDate = $today->copy()->addDays(3);
-    $isEdit = isset($listing) && $listing->id ? true : false;
+                <!-- Description and Image Upload -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Description & Information *</label>
+                        <textarea name="info" rows="6"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50 resize-none"
+                            placeholder="Describe your item in detail..." required>{{ old('info', $listing->info) }}</textarea>
+                    </div>
 
-    // Untuk edit, value tarikh format ISO, dan tiada min/max
-    // Untuk create, value default hari ini dan min/max ikut logic asal
-    if ($isEdit) {
-        $valueDate = old('date', \Carbon\Carbon::parse($listing->date)->format('Y-m-d'));
-        $minDate = null;
-        $maxDateLimit = null;
-    } else {
-        $valueDate = old('date', $today->toDateString());
-        $minDate = $today->toDateString();
-        $maxDateLimit = $maxDate->toDateString();
-    }
-@endphp
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Image (Optional)</label>
+                        <div id="upload-box" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-amber-400 transition-colors">
+                            <input type="file" name="image" id="image-upload" class="hidden" accept="image/*" />
+                            <label for="image-upload" class="cursor-pointer block">
+                                <svg class="mx-auto h-10 w-10 text-gray-400 mb-3" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="text-sm text-gray-600">Click to upload</span>
+                                <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+                            </label>
 
-<div class="group">
-    <label for="date" class="block font-semibold text-gray-800 mb-3 flex items-center">
-        <span class="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>
-        Bidding Date
-    </label>
-    <div class="relative">
-        <input
-            type="date"
-            id="date"
-            name="date"
-            value="{{ $valueDate }}"
-            @if ($minDate) min="{{ $minDate }}" @endif
-            @if ($maxDateLimit) max="{{ $maxDateLimit }}" @endif
-            class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300"
-            required
-        >
-    </div>
-</div>
+                            @if($listing->image)
+                                <div id="existing-image" class="mt-4 text-center">
+                                    <img src="{{ asset($listing->image) }}" class="mx-auto rounded-md shadow-sm max-h-24" alt="Current Image" />
+                                    <p class="text-xs text-gray-500 mt-1">Current Image</p>
+                                </div>
+                            @endif
 
-
-<!-- Bidding Duration -->
-<div class="group">
-    <label class="block font-semibold text-gray-800 mb-3 flex items-center">
-        <span class="w-2 h-2 bg-red-400 rounded-full mr-2"></span>
-        Bidding Duration
-    </label>
-    <div class="grid grid-cols-3 gap-4">
-        <!-- Days -->
-        <div class="relative">
-            <input type="number" id="duration_days" name="duration_days"
-                value="{{ old('duration_days', floor($listing->duration / 1440)) }}"
-                min="0" max="3" placeholder="0"
-                class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-center focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300" required>
-            <span class="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-xs text-gray-500 bg-white px-2 rounded">Days</span>
-        </div>
-
-        <!-- Hours -->
-        <div class="relative">
-            <input type="number" id="duration_hours" name="duration_hours"
-                value="{{ old('duration_hours', floor(($listing->duration % 1440) / 60)) }}"
-                min="0" max="23" placeholder="0"
-                class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-center focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300" required>
-            <span class="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-xs text-gray-500 bg-white px-2 rounded">Hours</span>
-        </div>
-
-        <!-- Minutes -->
-        <div class="relative">
-            <input type="number" id="duration_minutes" name="duration_minutes"
-                value="{{ old('duration_minutes', $listing->duration % 60) }}"
-                min="0" max="59" placeholder="0"
-                class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-center focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300" required>
-            <span class="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-xs text-gray-500 bg-white px-2 rounded">Minutes</span>
-        </div>
-    </div>
-    <div class="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-        <p class="text-sm text-amber-700 flex items-center">
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-            </svg>
-            Total duration cannot exceed 3 days
-        </p>
-    </div>
-</div>
-
-
-                <!-- Info -->
-                <div class="group">
-                    <label class="block font-semibold text-gray-800 mb-3 flex items-center">
-                        <span class="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span>
-                        Description & Information
-                    </label>
-                    <div class="relative">
-                        <textarea name="info" rows="5"
-                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 bg-gray-50 text-gray-800 transition-all duration-300 hover:border-gray-300 resize-none"
-                            placeholder="Describe your gold item in detail...">{{ old('info', $listing->info) }}</textarea>
+                            <div id="preview-container" class="mt-4 hidden text-center">
+                                <img id="preview-image" src="" alt="Preview" class="mx-auto rounded-md shadow-sm max-h-24" />
+                                <p id="file-name" class="mt-2 text-gray-700 text-xs"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-<!-- Image Upload -->
-<div>
-    <label class="block text-sm font-semibold text-gray-700 mb-2">Upload Image</label>
-    <div id="upload-box" class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center hover:border-amber-400 transition-colors relative">
 
-        <!-- Input file -->
-        <input type="file" name="image" id="image-upload" class="hidden" accept="image/*" />
-        <label for="image-upload" class="cursor-pointer">
-            <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="text-sm text-gray-600">Click to upload</span>
-            <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
-        </label>
-
-        <!-- Gambar asal (edit) -->
-        @if(isset($listing) && $listing->image)
-            <div id="existing-image" class="mt-4">
-                <p class="text-sm font-semibold mb-1">Current Image:</p>
-               <img src="{{ asset($listing->image) }}"
-     alt="{{ $listing->item }}"
-     class="w-48 h-auto object-cover rounded-md shadow-sm mx-auto">
-
-            </div>
-        @endif
-
-        <!-- Preview gambar baru -->
-        <div id="preview-container" class="mt-4 hidden">
-            <img id="preview-image" src="" alt="Preview" class="mx-auto rounded-md shadow-sm max-h-20" />
-            <p id="file-name" class="mt-1 text-gray-700 text-xs"></p>
-        </div>
-    </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const imageInput = document.getElementById('image-upload');
-    const previewContainer = document.getElementById('preview-container');
-    const previewImage = document.getElementById('preview-image');
-    const fileNameDisplay = document.getElementById('file-name');
-    const existingImage = document.getElementById('existing-image');
-
-    imageInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImage.src = e.target.result;
-                previewContainer.classList.remove('hidden');
-                if (existingImage) existingImage.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-            fileNameDisplay.textContent = file.name;
-        } else {
-            previewContainer.classList.add('hidden');
-            previewImage.src = '';
-            fileNameDisplay.textContent = '';
-            if (existingImage) existingImage.style.display = 'block';
-        }
-    });
-});
-</script>
-
-                <!-- Submit Button -->
-                <div class="pt-8">
+                <div class="pt-4 border-t border-gray-200">
                     <button type="submit"
-                        class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-yellow-300 flex items-center justify-center space-x-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="currentColor">
+                        class="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                         </svg>
-                        <span>Update Gold Listing</span>
+                        <span>Update Listing</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+const imageInput = document.getElementById('image-upload');
+const previewContainer = document.getElementById('preview-container');
+const previewImage = document.getElementById('preview-image');
+const fileNameDisplay = document.getElementById('file-name');
+const existingImage = document.getElementById('existing-image');
+
+imageInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.addEventListener('load', function() {
+            previewImage.setAttribute('src', this.result);
+            previewContainer.classList.remove('hidden');
+            if(existingImage) existingImage.style.display = 'none';
+        });
+        reader.readAsDataURL(file);
+        fileNameDisplay.textContent = file.name;
+    } else {
+        previewContainer.classList.add('hidden');
+        previewImage.setAttribute('src', '');
+        fileNameDisplay.textContent = '';
+        if(existingImage) existingImage.style.display = 'block';
+    }
+});
+</script>
 @endsection

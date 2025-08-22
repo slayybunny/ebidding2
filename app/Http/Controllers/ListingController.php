@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Listing;
 use App\Models\Bid;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -17,176 +16,161 @@ class ListingController extends Controller
         return view('tender.create-listing');
     }
 
- public function store(Request $request)
-{
-    $request->validate([
-        'item' => 'required|string|max:100',
-        'type' => 'required|string|max:100',
-        'price' => 'required|numeric|min:0',
-        'starting_price' => 'required|numeric|min:0',
-        'date' => 'required|date|after_or_equal:today',
-        'duration_days' => 'nullable|integer|min:0|max:3',
-        'duration_hours' => 'nullable|integer|min:0|max:23',
-        'duration_minutes' => 'nullable|integer|min:0|max:59',
-        'info' => 'required|string|max:200',
-        'currency' => 'required|in:MYR,IDR',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'item'           => 'required|string|max:255',
+            'type'           => 'required|string|max:255',
+            'price'          => 'required|numeric|min:0',
+            'starting_price' => 'required|numeric|min:0',
+            'currency'       => 'required|string|max:10',
+            'info'           => 'nullable|string',
+            'image'          => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
 
-    $days = (int) $request->input('duration_days', 0);
-    $hours = (int) $request->input('duration_hours', 0);
-    $minutes = (int) $request->input('duration_minutes', 0);
-    $duration = $days * 1440 + $hours * 60 + $minutes;
+            'start_date'     => 'required|date_format:Y-m-d',
+            'start_time'     => 'required|date_format:H:i',
+            'duration_days'  => 'nullable|integer|min:1',
+            'end_date'       => 'nullable|date_format:Y-m-d',
+            'end_time'       => 'nullable|date_format:H:i',
+        ]);
 
-    if ($duration < 1) {
-        return back()->withErrors(['duration' => 'Minimum duration must be at least 1 minute.'])->withInput();
+        // Upload gambar
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file      = $request->file('image');
+            $filename  = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images'), $filename);
+            $imagePath = 'images/' . $filename;
+        }
+
+        // Slug unik
+        $slug = Str::slug($request->item) . '-' . Str::random(6);
+
+        // Gabung tarikh + masa mula
+        $startAt = Carbon::createFromFormat('Y-m-d H:i', $request->start_date.' '.$request->start_time, 'Asia/Kuala_Lumpur');
+
+        // Tentukan tarikh tamat
+        if (filled($request->duration_days)) {
+            $endAt = (clone $startAt)->addDays((int)$request->duration_days);
+        } else {
+            $endDateStr = $request->end_date ?: $request->start_date;
+            $endTimeStr = $request->end_time ?: $request->start_time;
+            $endAt = Carbon::createFromFormat('Y-m-d H:i', $endDateStr.' '.$endTimeStr, 'Asia/Kuala_Lumpur');
+        }
+
+        if ($endAt->lte($startAt)) {
+            return back()->withErrors(['end_time' => 'End datetime must be after start datetime.'])->withInput();
+        }
+
+        // Simpan dalam DB
+        Listing::create([
+            'member_id'      => auth()->id(),
+            'item'           => $request->item,
+            'type'           => $request->type,
+            'price'          => $request->price,
+            'starting_price' => $request->starting_price,
+            'currency'       => $request->currency,
+            'info'           => $request->info,
+            'image'          => $imagePath,
+            'slug'           => $slug,
+
+            // Tarikh & masa asing
+            'start_date'     => $startAt->toDateString(),
+            'start_time'     => $startAt->format('H:i:s'),
+            'end_date'       => $endAt->toDateString(),
+            'end_time'       => $endAt->format('H:i:s'),
+
+            // Status auto
+            'status'         => now()->between($startAt, $endAt) ? 'active' : 'unactive',
+        ]);
+
+        return redirect()->route('my-gold-items')->with('success', 'Listing created successfully!');
     }
 
-    $currency = $request->currency;
-    $price = $currency === 'IDR' ? round($request->price) : number_format($request->price, 2, '.', '');
-    $starting_price = $currency === 'IDR' ? round($request->starting_price) : number_format($request->starting_price, 2, '.', '');
+    public function myGoldItems()
+    {
+        $goldListings = Listing::where('member_id', Auth::id())->get();
+        $now = Carbon::now();
 
-    $imagePath = null;
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-        $image->move(public_path('images'), $imageName);
-        $imagePath = 'images/' . $imageName;
-    }
-
-    $dateWithTime = Carbon::parse($request->date)->setTimeFrom(Carbon::now());
-
-    Listing::create([
-        'member_id' => Auth::id(),
-        'item' => $request->item,
-        'type' => $request->type,
-        'price' => $price,
-        'starting_price' => $starting_price,
-        'currency' => $currency,
-        'date' => $dateWithTime,
-        'duration' => $duration,
-        'info' => $request->info,
-        'image' => $imagePath,
-        'status' => 'active',
-        'slug' => Str::slug($request->item . '-' . uniqid())
-    ]);
-
-    return redirect()->route('my-gold-items')->with('success', 'Listing created successfully.');
-}
-
-public function myGoldItems()
-{
-    $goldListings = Listing::where('member_id', Auth::id())->get();
-    $now = Carbon::now();
-
-    foreach ($goldListings as $listing) {
-        // Kalau end_time null, kira semula guna date + duration
-        if (empty($listing->end_time) && !empty($listing->date) && !empty($listing->duration)) {
-            $listing->end_time = Carbon::parse($listing->date)->addMinutes($listing->duration);
-            $listing->save();
-        }
-
-        // Pastikan end_time bukan null sebelum compare
-        if ($listing->end_time && $listing->status === 'active' && $now->greaterThanOrEqualTo($listing->end_time)) {
-            $listing->status = 'unactive';
-            $listing->save();
-        }
-    }
-
-    return view('tender.my-gold-items', compact('goldListings'));
-}
-
-public function overview()
-{
-    $now = Carbon::now();
-
-    // Ambil semua listing milik user login
-    $listings = Listing::with('bids')
-        ->where('member_id', Auth::id())
-        ->orderByDesc('date')
-        ->get();
-
-    foreach ($listings as $listing) {
-        // Kira end_time kalau kosong dan simpan ke database
-        if (empty($listing->end_time)) {
-            $listing->end_time = Carbon::parse($listing->date)->addMinutes($listing->duration);
-            $listing->save();
-        }
-
-        $bids = $listing->bids->sortByDesc('bid_price');
-        $isExpired = $now->greaterThanOrEqualTo($listing->end_time);
-
-        // Tukar status jadi unactive bila expired & pastikan end_time konsisten
-        if ($isExpired && $listing->status === 'active') {
-            $listing->status = 'unactive';
-            $listing->end_time = $listing->end_time ?? Carbon::parse($listing->date)->addMinutes($listing->duration);
-            $listing->save();
-        }
-
-        // Tentukan pemenang bila expired & belum ada winner
-        if ($isExpired && $bids->isNotEmpty() && $listing->bids->where('status', 'winner')->isEmpty()) {
-            $winnerBid = $bids->first();
-            $winnerBid->status = 'winner';
-            $winnerBid->save();
-
-            foreach ($bids->skip(1) as $loseBid) {
-                $loseBid->status = 'lose';
-                $loseBid->save();
-            }
-        }
-    }
-
-    return view('tender.listing-overview', compact('listings'));
-}
-
-
-
-
-public function liveBidding()
-{
-    $now = Carbon::now();
-
-    // Ambil semua listing yang belum tamat berdasarkan end_time atau duration
-    $listings = Listing::where('status', 'active')
-        ->where('date', '<=', $now)
-        ->get()
-        ->filter(function ($listing) use ($now) {
-            // Kira end_time kalau kosong
-            if (empty($listing->end_time)) {
-                $listing->end_time = Carbon::parse($listing->date)->addMinutes($listing->duration);
+        foreach ($goldListings as $listing) {
+            $endAt = Carbon::parse($listing->end_date.' '.$listing->end_time);
+            if ($listing->status === 'active' && $now->gte($endAt)) {
+                $listing->status = 'unactive';
                 $listing->save();
             }
+        }
 
-            // Kalau dah tamat, update status
-            if ($listing->end_time->lte($now) && $listing->status === 'active') {
+        return view('tender.my-gold-items', compact('goldListings'));
+    }
+
+    public function overview()
+    {
+        $now = Carbon::now();
+        $listings = Listing::with('bids')
+            ->where('member_id', Auth::id())
+            ->orderByDesc('created_at')
+            ->get();
+
+        foreach ($listings as $listing) {
+            $endAt = Carbon::parse($listing->end_date.' '.$listing->end_time);
+            $bids = $listing->bids->sortByDesc('bid_price');
+            $isExpired = $now->gte($endAt);
+
+            if ($isExpired && $listing->status === 'active') {
                 $listing->status = 'unactive';
                 $listing->save();
             }
 
-            // Return listing yang masih live sahaja
-            return $listing->status === 'active' && $listing->end_time->gt($now);
-        });
+            if ($isExpired && $bids->isNotEmpty() && $listing->bids->where('status','winner')->isEmpty()) {
+                $winnerBid = $bids->first();
+                $winnerBid->status = 'winner';
+                $winnerBid->save();
 
-    return view('live-bidding', compact('listings'));
-}
+                foreach ($bids->skip(1) as $loseBid) {
+                    $loseBid->status = 'lose';
+                    $loseBid->save();
+                }
+            }
+        }
+
+        return view('tender.listing-overview', compact('listings'));
+    }
+
+    public function liveBidding()
+    {
+        $now = Carbon::now();
+
+        // Ambil listings yang status active dan belum tamat
+        $listings = Listing::where('status', 'active')
+            ->where('end_date', '>=', $now->toDateString())
+            ->where('start_date', '<=', $now->toDateString())
+            ->whereRaw("CONCAT(start_date, ' ', start_time) <= ?", [$now])
+            ->whereRaw("CONCAT(end_date, ' ', end_time) > ?", [$now])
+            ->orderByDesc('start_date')
+            ->orderByDesc('start_time')
+            ->get();
+
+        return view('live-bidding', compact('listings'));
+    }
 
 
     public function listingOverviewAll()
     {
         $listings = Listing::with(['bids.member'])
             ->where('member_id', Auth::id())
-            ->orderByDesc('date')
+            ->orderByDesc('created_at')
             ->get();
         $now = Carbon::now();
 
         foreach ($listings as $listing) {
-            $endTime = Carbon::parse($listing->date)->addMinutes($listing->duration);
+            $endAt = Carbon::parse($listing->end_date.' '.$listing->end_time);
 
-            if ($now->greaterThanOrEqualTo($endTime) && $listing->status === 'active') {
+            if ($listing->status === 'active' && $now->gte($endAt)) {
                 $listing->status = 'unactive';
                 $listing->save();
             }
-            if ($now->greaterThanOrEqualTo($endTime) && $listing->bids->isNotEmpty() && $listing->bids->where('status', 'winner')->isEmpty()) {
+
+            if ($now->gte($endAt) && $listing->bids->isNotEmpty() && $listing->bids->where('status','winner')->isEmpty()) {
                 $winnerBid = $listing->bids->sortByDesc('bid_price')->first();
                 if ($winnerBid) {
                     $winnerBid->status = 'winner';
@@ -206,7 +190,7 @@ public function liveBidding()
     public function biddingHistory()
     {
         $userId = Auth::id();
-        $listings = Listing::where('status', 'unactive')
+        $listings = Listing::where('status','unactive')
             ->whereHas('bids', function ($query) use ($userId) {
                 $query->where('member_id', $userId);
             })
@@ -214,58 +198,52 @@ public function liveBidding()
         return view('bidding.history', compact('listings'));
     }
 
-public function edit($slug)
-{
-    $listing = Listing::where('slug', $slug)->firstOrFail();
-    return view('tender.edit-listing', compact('listing'));
-}
-
-public function update(Request $request, $slug)
-{
-    $listing = Listing::where('slug', $slug)->firstOrFail();
-
-    $validated = $request->validate([
-        'item' => 'required|string|max:100',
-        'type' => 'nullable|string|max:100',
-        'price' => 'nullable|numeric',
-        'starting_price' => 'nullable|numeric',
-        'date' => 'nullable|date',
-        'duration_days' => 'nullable|integer|min:0|max:3',
-        'duration_hours' => 'nullable|integer|min:0|max:23',
-        'duration_minutes' => 'nullable|integer|min:0|max:59',
-        'info' => 'nullable|string',
-        'image' => 'nullable|image|max:2048',
-        'currency' => 'nullable|string|max:3',
-    ]);
-
-    // Handle image
-    if ($request->hasFile('image')) {
-        $file = $request->file('image');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('images'), $filename);
-        $validated['image'] = 'images/' . $filename;
-    } else {
-        $validated['image'] = $listing->image;
+    public function edit($slug)
+    {
+        $listing = Listing::where('slug', $slug)->firstOrFail();
+        return view('tender.edit-listing', compact('listing'));
     }
 
-    // Date
-    $newDate = !empty($validated['date']) ? Carbon::parse($validated['date']) : Carbon::parse($listing->date);
+    public function update(Request $request, $slug)
+    {
+        $listing = Listing::where('slug', $slug)->firstOrFail();
 
-    // Duration
-    $days = (int) $request->input('duration_days', 0);
-    $hours = (int) $request->input('duration_hours', 0);
-    $minutes = (int) $request->input('duration_minutes', 0);
-    $newDuration = $days * 1440 + $hours * 60 + $minutes;
-    if ($newDuration < 1) $newDuration = $listing->duration; // fallback
+        $validated = $request->validate([
+            'item' => 'required|string|max:100',
+            'type' => 'nullable|string|max:100',
+            'price' => 'nullable|numeric',
+            'starting_price' => 'nullable|numeric',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after_or_equal:'.$request->start_date,
+            'start_time' => 'required|date_format:H:i',
+            'end_time'   => 'required|date_format:H:i',
+            'info' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
+            'currency' => 'nullable|string|max:3',
+        ]);
 
-    $validated['duration'] = $newDuration;
-    $validated['end_time'] = $newDate->copy()->addMinutes($newDuration);
-    $validated['date'] = $newDate;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('images'), $filename);
+            $validated['image'] = 'images/'.$filename;
+        } else {
+            $validated['image'] = $listing->image;
+        }
 
-    $listing->update($validated);
+        $startAt = Carbon::parse($validated['start_date'].' '.$validated['start_time']);
+        $endAt   = Carbon::parse($validated['end_date'].' '.$validated['end_time']);
 
-    return redirect()->route('my-gold-items')->with('success', 'Listing updated successfully.');
-}
+        if ($endAt->lte($startAt)) {
+            return back()->withErrors(['end_time' => 'End datetime must be after start datetime.'])->withInput();
+        }
+
+        $validated['status'] = now()->between($startAt, $endAt) ? 'active' : 'unactive';
+
+        $listing->update($validated);
+
+        return redirect()->route('my-gold-items')->with('success', 'Listing updated successfully.');
+    }
 
     public function destroy($slug)
     {
@@ -273,8 +251,8 @@ public function update(Request $request, $slug)
         if ($listing->member_id !== Auth::id()) {
             abort(403);
         }
-        if ($listing->image) {
-            Storage::disk('public')->delete($listing->image);
+        if ($listing->image && file_exists(public_path($listing->image))) {
+            unlink(public_path($listing->image));
         }
         $listing->delete();
         return redirect()->route('my-gold-items')->with('success', 'Listing deleted successfully.');
@@ -294,10 +272,9 @@ public function update(Request $request, $slug)
         return view('status', compact('listings'));
     }
 
-
     public function winner()
     {
-        $winners = Bid::where('status', 'winner')->with(['member', 'listing'])->get();
+        $winners = Bid::where('status', 'winner')->with(['member','listing'])->get();
         return view('winner', compact('winners'));
     }
 }
