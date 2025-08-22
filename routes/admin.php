@@ -14,6 +14,7 @@ use App\Http\Controllers\admin\RulesManualController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\admin\ManageMembersController;
 use App\Http\Controllers\admin\AdminController; // ✅ Tambah import AdminController
+use App\Http\Controllers\admin\ReportingController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
@@ -60,7 +61,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Bidding History
         Route::get('/bidding-history', [BiddingHistoryController::class, 'index'])->name('bidding-history.index');
-        Route::delete('login-log/{id}', [BiddingHistoryController::class, 'destroyLoginLog'])->name('login-log.destroy');
+        Route::delete('login-log/{loginLog}', [BiddingHistoryController::class, 'destroy'])->name('login-log.destroy');
 
         // Bidding Status
         Route::get('/bidding-status', [BiddingStatusController::class, 'index'])->name('bidding-status.index');
@@ -76,5 +77,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Profit Reports
         Route::get('/profit-report', [ProfitReportController::class, 'index'])->name('profit.report');
+
+        Route::get('/reports/profit', [ReportingController::class, 'showProfitForm'])->name('reports.profit.form');
+        Route::post('/reports/profit/calculate', [ReportingController::class, 'calculateProfit'])->name('reports.profit.calculate');
     });
 });

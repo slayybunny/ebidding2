@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 
-@section('title', 'Rekod Pembayaran')
+@section('title', 'Payment Records')
 @section('page-title', 'PAYMENT RECORDS')
 
 @section('content')
@@ -204,29 +204,29 @@
                 <div class="header-icon">
                     <i class="fas fa-credit-card fa-lg"></i>
                 </div>
-                Rekod Pembayaran eBidding
+                eBidding Payment Records
                 <span class="ms-auto badge bg-light text-dark">
                     <i class="fas fa-database me-1"></i>
-                    5 Rekod
+                    5 Records
                 </span>
             </h4>
         </div>
 
         <div class="info-cards mt-4">
             <div class="info-card">
-                <h6>Jumlah Keseluruhan</h6>
+                <h6>Grand Total</h6>
                 <div class="value text-success">RM 1,826.25</div>
             </div>
             <div class="info-card">
-                <h6>Pembayaran Berjaya</h6>
+                <h6>Successful Payments</h6>
                 <div class="value text-success">3</div>
             </div>
             <div class="info-card">
-                <h6>Pembayaran Tertangguh</h6>
+                <h6>Pending Payments</h6>
                 <div class="value text-warning">1</div>
             </div>
             <div class="info-card">
-                <h6>Pembayaran Gagal</h6>
+                <h6>Failed Payments</h6>
                 <div class="value text-danger">1</div>
             </div>
         </div>
@@ -237,20 +237,20 @@
                     <div class="col-md-5">
                         <div class="search-box">
                             <i class="fas fa-search"></i>
-                            <input type="text" class="form-control" placeholder="Cari nama pengguna...">
+                            <input type="text" class="form-control" placeholder="Search for user name...">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <select class="filter-select" id="statusFilter">
-                            <option value="">Semua Status</option>
-                            <option value="Selesai">Berjaya</option>
-                            <option value="Pending">Tertangguh</option>
-                            <option value="Gagal">Gagal</option>
+                            <option value="">All Status</option>
+                            <option value="Successful">Successful</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Failed">Failed</option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <select class="filter-select" id="methodFilter">
-                            <option value="">Semua Kaedah</option>
+                            <option value="">All Methods</option>
                             <option value="online banking">Online Banking</option>
                             <option value="credit card">Credit Card</option>
                             <option value="fpx">FPX</option>
@@ -267,25 +267,25 @@
             <table class="table gov-table" id="paymentTable">
                 <thead>
                     <tr>
-                        <th width="5%">Bil</th>
-                        <th width="25%">Nama Pengguna</th>
-                        <th width="15%">Jumlah (RM)</th>
-                        <th width="15%">Kaedah Bayaran</th>
-                        <th width="20%">Tarikh & Masa</th>
+                        <th width="5%">No.</th>
+                        <th width="25%">User Name</th>
+                        <th width="15%">Amount (RM)</th>
+                        <th width="15%">Payment Method</th>
+                        <th width="20%">Date & Time</th>
                         <th width="20%">Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- Ganti data di bawah dengan loop dari pangkalan data --}}
-                    {{-- Contoh data mockup: --}}
-                    <tr data-status="Selesai" data-method="online banking" data-user="Ali Bin Ahmad">
+                    {{-- Replace the data below with a loop from the database --}}
+                    {{-- Example mockup data: --}}
+                    <tr data-status="Successful" data-method="online banking" data-user="Ali Bin Ahmad">
                         <td class="text-center fw-bold">01</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="avatar-circle me-3">A</div>
                                 <div>
                                     <div class="fw-semibold">Ali Bin Ahmad</div>
-                                    <div class="text-muted small">Pengguna Berdaftar</div>
+                                    <div class="text-muted small">Registered User</div>
                                 </div>
                             </div>
                         </td>
@@ -303,7 +303,7 @@
                         <td>
                             <span class="status-badge status-success">
                                 <i class="fas fa-check-circle me-1"></i>
-                                Selesai
+                                Successful
                             </span>
                         </td>
                     </tr>
@@ -315,7 +315,7 @@
                                 <div class="avatar-circle me-3">S</div>
                                 <div>
                                     <div class="fw-semibold">Siti Zarina Binti Omar</div>
-                                    <div class="text-muted small">Pengguna Berdaftar</div>
+                                    <div class="text-muted small">Registered User</div>
                                 </div>
                             </div>
                         </td>
@@ -338,14 +338,14 @@
                         </td>
                     </tr>
 
-                    <tr data-status="Gagal" data-method="online banking" data-user="Muthu Kumar A/L Raman">
+                    <tr data-status="Failed" data-method="online banking" data-user="Muthu Kumar A/L Raman">
                         <td class="text-center fw-bold">03</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="avatar-circle me-3">M</div>
                                 <div>
                                     <div class="fw-semibold">Muthu Kumar A/L Raman</div>
-                                    <div class="text-muted small">Pengguna Berdaftar</div>
+                                    <div class="text-muted small">Registered User</div>
                                 </div>
                             </div>
                         </td>
@@ -363,19 +363,19 @@
                         <td>
                             <span class="status-badge status-failed">
                                 <i class="fas fa-times-circle me-1"></i>
-                                Gagal
+                                Failed
                             </span>
                         </td>
                     </tr>
 
-                    <tr data-status="Selesai" data-method="credit card" data-user="Fatimah Binti Hassan">
+                    <tr data-status="Successful" data-method="credit card" data-user="Fatimah Binti Hassan">
                         <td class="text-center fw-bold">04</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="avatar-circle me-3">F</div>
                                 <div>
                                     <div class="fw-semibold">Fatimah Binti Hassan</div>
-                                    <div class="text-muted small">Pengguna Berdaftar</div>
+                                    <div class="text-muted small">Registered User</div>
                                 </div>
                             </div>
                         </td>
@@ -393,19 +393,19 @@
                         <td>
                             <span class="status-badge status-success">
                                 <i class="fas fa-check-circle me-1"></i>
-                                Selesai
+                                Successful
                             </span>
                         </td>
                     </tr>
 
-                    <tr data-status="Selesai" data-method="fpx" data-user="Lim Wei Ming">
+                    <tr data-status="Successful" data-method="fpx" data-user="Lim Wei Ming">
                         <td class="text-center fw-bold">05</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="avatar-circle me-3">L</div>
                                 <div>
                                     <div class="fw-semibold">Lim Wei Ming</div>
-                                    <div class="text-muted small">Pengguna Berdaftar</div>
+                                    <div class="text-muted small">Registered User</div>
                                 </div>
                             </div>
                         </td>
@@ -423,7 +423,7 @@
                         <td>
                             <span class="status-badge status-success">
                                 <i class="fas fa-check-circle me-1"></i>
-                                Selesai
+                                Successful
                             </span>
                         </td>
                     </tr>
@@ -433,19 +433,19 @@
             <div class="pagination-wrapper">
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <p class="mb-0 text-muted">Menunjukkan 1 hingga 5 daripada 5 rekod</p>
+                        <p class="mb-0 text-muted">Showing 1 to 5 of 5 records</p>
                     </div>
                     <div class="col-md-6 text-end">
-                        <nav aria-label="Navigasi halaman">
+                        <nav aria-label="Page navigation">
                             <ul class="pagination mb-0">
                                 <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1">Sebelumnya</a>
+                                    <a class="page-link" href="#" tabindex="-1">Previous</a>
                                 </li>
                                 <li class="page-item active">
                                     <a class="page-link" href="#">1</a>
                                 </li>
                                 <li class="page-item disabled">
-                                    <a class="page-link" href="#">Seterusnya</a>
+                                    <a class="page-link" href="#">Next</a>
                                 </li>
                             </ul>
                         </nav>
@@ -470,7 +470,7 @@
                 let visibleRowsCount = 0;
 
                 tableRows.forEach(row => {
-                    // Ambil nama pengguna dari atribut data-user
+                    // Get user name from the data-user attribute
                     const userName = row.dataset.user.toLowerCase();
                     const statusText = row.dataset.status.toLowerCase();
                     const paymentMethodText = row.dataset.method.toLowerCase();

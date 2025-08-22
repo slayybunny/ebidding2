@@ -38,7 +38,6 @@ class BiddingHistoryController extends Controller
     {
         $loginLog->delete();
 
-        // Redirect kembali dengan mesej kejayaan
         return redirect()->back()->with('success', 'Rekod log masuk berjaya dipadam.');
     }
 }

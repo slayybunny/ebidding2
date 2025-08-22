@@ -34,22 +34,18 @@
                                         {{-- Warna teks Tender kepada warna gold gelap --}}
                                         <small class="text-gold">Tender: {{ $auction->member->name }}</small>
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($auction->start_time)->format('Y-m-d h:i A') }}</td>
+                                    {{-- Menggunakan created_at untuk Start Date --}}
+                                    <td>{{ \Carbon\Carbon::parse($auction->created_at)->format('Y-m-d h:i A') }}</td>
+                                    {{-- Menggunakan end_time untuk End Date --}}
                                     <td>{{ \Carbon\Carbon::parse($auction->end_time)->format('Y-m-d h:i A') }}</td>
                                     <td>
-                                        @if ($auction->status === 'upcoming')
-                                            <span
-                                                class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-2">
-                                                <i class="fas fa-clock me-1"></i> Upcoming
-                                            </span>
-                                        @elseif ($auction->status === 'active')
-                                            <span
-                                                class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                                        {{-- Logik Status yang diperbaiki --}}
+                                        @if (\Carbon\Carbon::now()->isBefore($auction->end_time))
+                                            <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-2">
                                                 <i class="fas fa-play me-1"></i> Ongoing
                                             </span>
                                         @else
-                                            <span
-                                                class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-3 py-2">
+                                            <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-3 py-2">
                                                 <i class="fas fa-check-circle me-1"></i> Completed
                                             </span>
                                         @endif

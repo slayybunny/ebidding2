@@ -3,6 +3,33 @@
 @section('title', 'Detailed Bidding Information')
 @section('page-title', 'Detailed Bidding Information')
 
+@section('styles')
+<style>
+    /* CSS tersuai untuk warna kelabu gelap */
+    .bg-dark-grey {
+        background-color: #212529 !important; /* Warna kelabu gelap */
+        color: #fff;
+    }
+
+    /* CSS tambahan untuk header rasmi */
+    .official-header {
+        background: #212529 !important;
+        color: #fff;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+    }
+    
+    .breadcrumb a,
+    .breadcrumb-item.active {
+        color: #fff !important;
+    }
+
+    .card-header.bg-info {
+        background-color: #212529 !important;
+    }
+</style>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         {{-- Top Header Section --}}
@@ -46,7 +73,7 @@
                 <i class="fas fa-arrow-left me-2"></i>
                 Back to Bidding List
             </a>
-            {{-- Check if bidding exists and status is not 'COMPLETED' before showing edit/delete buttons --}}
+            {{-- Check if bidding exists and status is not 'COMPLETED' before showing delete button --}}
             @if (isset($bidding) && $bidding->status !== 'COMPLETED')
                 <div class="d-flex">
                     <button type="button" class="btn btn-danger d-flex align-items-center" data-bs-toggle="modal"
@@ -58,314 +85,101 @@
             @endif
         </div>
 
-        {{-- Code for Bidding Status --}}
-        @php
-            $bidding = $bidding ?? null;
-            $statusClass = '';
-            $statusText = '';
-            if ($bidding) {
-                switch ($bidding->status) {
-                    case 'PENDING':
-                        $statusClass = 'status-pending';
-                        $statusText = 'PENDING';
-                        break;
-                    case 'ONGOING':
-                        $statusClass = 'status-ongoing';
-                        $statusText = 'ONGOING';
-                        break;
-                    case 'COMPLETED':
-                        $statusClass = 'status-ended';
-                        $statusText = 'COMPLETED';
-                        break;
-                    default:
-                        $statusClass = 'status-ended';
-                        $statusText = 'COMPLETED';
-                        break;
-                }
-            }
-        @endphp
-
+        {{-- Main Content Section --}}
         <div class="row">
+            {{-- Bidding Item Information Card --}}
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-black text-white">
+                        <h4 class="mb-0">Bidding Item Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="info-list">
+                            <li><span class="label">Bidding Item:</span> <span class="value">{{ $bidding->item }}</span>
+                            </li>
+                            <li><span class="label">Description:</span> <span class="value">{{ $bidding->info }}</span>
+                            </li>
+                            <li><span class="label">Starting Price:</span> <span class="value">RM
+                                        {{ number_format($bidding->price, 2) }}</span></li>
+                            <li><span class="label">Start Date:</span> <span
+                                        class="value">{{ \Carbon\Carbon::parse($bidding->created_at)->format('d M Y, H:i:s') }}</span>
+                            </li>
+                            <li><span class="label">End Date:</span> <span
+                                        class="value">{{ \Carbon\Carbon::parse($bidding->end_time)->format('d M Y, H:i:s') }}</span>
+                            </li>
+                            <li><span class="label">Total Bidders:</span> <span
+                                        class="value">{{ $bidding->bids->count() }}</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Bidding Status and High Bid Card --}}
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-black text-white">
+                        <h4 class="mb-0">Bidding Status</h4>
+                    </div>
+                    <div class="card-body system-info">
+                        <div class="system-item">
+                            <span class="label">Bidding Status:</span>
+                            <span class="value">
+                                @if (\Carbon\Carbon::parse($bidding->end_time)->isFuture())
+                                    <span class="badge bg-success">Ongoing</span>
+                                @else
+                                    <span class="badge bg-danger">Ended</span>
+                                @endif
+                            </span>
+                        </div>
+                        <div class="system-item">
+                            <span class="label">Highest Bid:</span>
+                            <span class="value">RM
+                                {{ number_format($bidding->bids->max('bid_price') ?? $bidding->price, 2) }}</span>
+                        </div>
+                        <div class="system-item">
+                            <span class="label">Highest Bidder:</span>
+                            <span class="value">
+                                @if ($bidding->status === 'COMPLETED')
+                                    {{ $winner->name ?? 'N/A' }}
+                                @else
+                                    @php
+                                        $highestBid = $bidding->bids->sortByDesc('bid_price')->first();
+                                    @endphp
+                                    {{-- Mengubah dari $highestBid->user kepada $highestBid->member --}}
+                                    {{ $highestBid && $highestBid->member ? $highestBid->member->name : 'No bidders yet' }}
+                                @endif
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Section C: Display Information from 'bids' table --}}
+            @if ($bidding->bids->count() > 0)
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm">
+                    <div class="card-header bg-black text-white">
+                            <h4 class="mb-0">List of Bidders</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="info-list">
+                                @foreach($bidding->bids->sortByDesc('bid_price') as $bid)
+                                    <li>
+                                        <span class="label">Bidder Name:</span>
+                                        {{-- Mengubah dari $bid->user kepada $bid->member --}}
+                                        <span class="value">{{ $bid->member ? $bid->member->name : 'N/A' }}</span>
+                                        <span class="label" style="margin-left: 20px;">Bid Amount:</span>
+                                        <span class="value">RM {{ number_format($bid->bid_price, 2) }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Footer Info --}}
             <div class="col-12">
-                {{-- Section A: Product Information --}}
-                <div class="official-section mb-4">
-                    <div class="section-header">
-                        <h3 class="section-title">A. PRODUCT INFORMATION</h3>
-                    </div>
-                    <div class="section-content p-4">
-                        <div class="row">
-                            {{-- Add item image here (fetched from database) --}}
-                            @if (isset($bidding->image_url) && !empty($bidding->image_url))
-                                <div class="col-md-4 mb-3">
-                                    <div class="image-container">
-                                        <img src="{{ asset($bidding->image_url) }}" alt="Bidding Item Image"
-                                            class="img-fluid item-image">
-                                    </div>
-                                </div>
-                            @endif
-                            <div class="col-md-8">
-                                <div class="row">
-                                    {{-- Only show this row if PRODUCT NAME exists (fetched from database) --}}
-                                    @if (isset($bidding->item) && !empty($bidding->item))
-                                        <div class="col-12 mb-3">
-                                            <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label-sm fw-bold">PRODUCT NAME</label>
-                                                <div class="col-sm-8">
-                                                    <p class="form-control-static fw-bold">{{ $bidding->item }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                    {{-- Only show this row if NET WEIGHT exists (fetched from database) --}}
-                                    @if (isset($bidding->net_weight) && !empty($bidding->net_weight))
-                                        <div class="col-12 mb-3">
-                                            <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label-sm fw-bold">NET WEIGHT</label>
-                                                <div class="col-sm-8">
-                                                    <p class="form-control-static">{{ $bidding->net_weight }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                    {{-- Only show this row if PURITY LEVEL exists (fetched from database) --}}
-                                    @if (isset($bidding->purity_level) && !empty($bidding->purity_level))
-                                        <div class="col-12 mb-3">
-                                            <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label-sm fw-bold">PURITY LEVEL</label>
-                                                <div class="col-sm-8">
-                                                    <p class="form-control-static">{{ $bidding->purity_level }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                    {{-- Only show this row if CATEGORY exists (fetched from database) --}}
-                                    @if (isset($bidding->category) && !empty($bidding->category))
-                                        <div class="col-12 mb-3">
-                                            <div class="form-group row">
-                                                <label class="col-sm-4 col-form-label-sm fw-bold">CATEGORY</label>
-                                                <div class="col-sm-8">
-                                                    <p class="form-control-static">{{ $bidding->category }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Section B: Bidding Information --}}
-                <div class="official-section mb-4">
-                    <div class="section-header">
-                        <h3 class="section-title">B. BIDDING INFORMATION</h3>
-                    </div>
-                    <div class="section-content p-4">
-                        <div class="row">
-                            {{-- Only show this row if STARTING PRICE exists and is more than 0 (fetched from database) --}}
-                            @if (isset($bidding->starting_price) && $bidding->starting_price > 0)
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label-sm fw-bold">STARTING PRICE</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">RM
-                                                {{ number_format($bidding->starting_price, 2) }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            {{-- Highest bid only displayed if status is COMPLETED --}}
-                            @if ($bidding->status === 'COMPLETED' && isset($bidding->highest_bid) && $bidding->highest_bid > 0)
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label-sm fw-bold">HIGHEST BID</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">RM {{ number_format($bidding->highest_bid, 2) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            {{-- Only show this row if START DATE exists (fetched from database) --}}
-                            @if (isset($bidding->start_date) && !empty($bidding->start_date))
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label-sm fw-bold">START DATE</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">
-                                                {{ $bidding->start_date->format('d F Y, h:i A') }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            {{-- Only show this row if TOTAL BIDS exists (fetched from database) --}}
-                            @if (isset($bidding->total_bids) && $bidding->total_bids >= 0)
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label-sm fw-bold">TOTAL BIDS</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">{{ $bidding->total_bids }} bids</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            {{-- Only show this row if END DATE exists (fetched from database) --}}
-                            @if (isset($bidding->end_date) && !empty($bidding->end_date))
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label-sm fw-bold">END DATE</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">
-                                                {{ $bidding->end_date->format('d F Y, h:i A') }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            {{-- Display the number of bidders (Number of Bidders) --}}
-                            @if (isset($bidding->number_of_bidders) && $bidding->number_of_bidders >= 0)
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label-sm fw-bold">NUMBER OF BIDDERS</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">{{ $bidding->number_of_bidders }} people</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            {{-- Only show this row if STATUS exists (fetched from database) --}}
-                            @if (isset($bidding->status) && !empty($bidding->status))
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label-sm fw-bold">STATUS</label>
-                                        <div class="col-sm-8">
-                                            <div class="status-badge {{ $statusClass }}">
-                                                <span>{{ $statusText }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            {{-- Only show this row if PERCENTAGE INCREASE exists and is more than 0 (fetched from database) --}}
-                            @if (isset($bidding->percentage_increase) && $bidding->percentage_increase > 0 && $bidding->status === 'COMPLETED')
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label-sm fw-bold">PERCENTAGE INCREASE</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">
-                                                +{{ number_format($bidding->percentage_increase, 2) }}%</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Section C: Display Information by Status --}}
-                @if (isset($bidding->status) && $bidding->status === 'COMPLETED' && isset($winner))
-                    {{-- Winner Information (Only for completed bids) --}}
-                    <div class="official-section mb-4 winner-section">
-                        <div class="section-header">
-                            <h3 class="section-title">C. WINNER INFORMATION</h3>
-                        </div>
-                        <div class="section-content p-4">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="row">
-                                        {{-- Only show this row if WINNER NAME exists --}}
-                                        @if (isset($winner->name) && !empty($winner->name))
-                                            <div class="col-12 mb-3">
-                                                <div class="form-group row">
-                                                    <label class="col-sm-4 col-form-label-sm fw-bold">WINNER NAME</label>
-                                                    <div class="col-sm-8">
-                                                        <p class="form-control-static fw-bold">{{ $winner->name }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                        {{-- Only show this row if USER ID exists --}}
-                                        @if (isset($winner->user_id) && !empty($winner->user_id))
-                                            <div class="col-12 mb-3">
-                                                <div class="form-group row">
-                                                    <label class="col-sm-4 col-form-label-sm fw-bold">USER ID</label>
-                                                    <div class="col-sm-8">
-                                                        <p class="form-control-static">{{ $winner->user_id }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                        {{-- Only show this row if FINAL BID exists and is more than 0 --}}
-                                        @if (isset($winner->final_bid) && $winner->final_bid > 0)
-                                            <div class="col-12 mb-3">
-                                                <div class="form-group row">
-                                                    <label class="col-sm-4 col-form-label-sm fw-bold">FINAL BID</label>
-                                                    <div class="col-sm-8">
-                                                        <p class="form-control-static fw-bold text-success">
-                                                            RM {{ number_format($winner->final_bid, 2) }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                        {{-- Only show this row if BID TIME exists --}}
-                                        @if (isset($winner->bid_time) && !empty($winner->bid_time))
-                                            <div class="col-12 mb-3">
-                                                <div class="form-group row">
-                                                    <label class="col-sm-4 col-form-label-sm fw-bold">BID TIME</label>
-                                                    <div class="col-sm-8">
-                                                        <p class="form-control-static">
-                                                            {{ $winner->bid_time->format('d F Y, h:i A') }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-md-4 d-flex justify-content-center align-items-center">
-                                    <div class="winner-stamp">
-                                        WINNER<br>OF BIDDING
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @elseif (isset($bidding->status) && $bidding->status === 'ONGOING' && isset($currentBids) && $currentBids->isNotEmpty())
-                    {{-- Current Bidders List (Only for ongoing bids) --}}
-                    <div class="official-section mb-4 current-bids-section">
-                        <div class="section-header">
-                            <h3 class="section-title">C. CURRENT BIDDING INFORMATION</h3>
-                        </div>
-                        <div class="section-content p-4">
-                            <div class="table-responsive">
-                                <table class="table table-government-mini table-striped mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>NO.</th>
-                                            <th>USER NAME</th>
-                                            <th>USER ID</th>
-                                            <th>BID AMOUNT</th>
-                                            <th>BID TIME</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($currentBids as $index => $bid)
-                                            <tr>
-                                                <td>{{ $index + 1 }}</td>
-                                                <td>{{ $bid->name }}</td>
-                                                <td>{{ $bid->user_id }}</td>
-                                                <td>RM {{ number_format($bid->amount, 2) }}</td>
-                                                <td>{{ $bid->bid_time ? $bid->bid_time->format('d/m/Y H:i:s') : '-' }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Footer Info --}}
                 <div class="footer-info mt-4">
                     <div class="row">
                         <div class="col-md-6">
@@ -424,6 +238,7 @@
             </div>
         </div>
     </div>
+
 
     <style>
         body {

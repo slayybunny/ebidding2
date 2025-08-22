@@ -3,54 +3,44 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Member;
 use App\Models\Listing;
-use App\Models\Bid;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class BiddingStatusController extends Controller
 {
+    /**
+     * Tunjukkan halaman status lelongan dengan semua senarai item.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
-    {
-        // Ambil semua lelongan dengan informasi member dan jumlah bidaan
-        $auctions = Listing::with('member')
-            ->withCount('bids') // Kekalkan ini, ia tidak mengganggu
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($auction) {
-                // Tentukan status berdasarkan waktu
-                $now = Carbon::now();
-                $start_time = Carbon::parse($auction->start_time);
-                $end_time = Carbon::parse($auction->end_time);
-
-                if ($now->lessThan($start_time)) {
-                    $status = 'upcoming';
-                } elseif ($now->greaterThanOrEqualTo($start_time) && $now->lessThanOrEqualTo($end_time)) {
-                    $status = 'active';
-                } else {
-                    $status = 'completed';
-                }
-
-                $auction->status = $status; // Tambah status ke objek lelongan
-                return $auction;
-            });
-
-        return view('admin.bidding-status.index', compact('auctions'));
-    }
-
-    public function show($id)
 {
-    // Ambil satu lelongan dengan semua bidaan
-    $auction = Listing::with(['bids.member', 'member'])->findOrFail($id);
+    $now = Carbon::now();
 
-    // Ambil bidaan dari objek lelongan
-    $bids = $auction->bids;
+    // Ambil hanya lelongan yang sedang aktif/berjalan.
+    // Menggunakan created_at kerana start_time tidak wujud.
+    $auctions = Listing::with('member')
+        ->where('created_at', '<=', $now)
+        ->where('end_time', '>=', $now)
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-    // Anda juga mungkin mahu mendapatkan bidaan tertinggi
-    $highestBid = $auction->bids->sortByDesc('amount')->first();
-
-    // Hantar kedua-dua 'auction' dan 'bids' ke paparan
-    return view('admin.bidding-status.show', compact('auction', 'highestBid', 'bids'));
+    return view('admin.bidding-status.index', compact('auctions'));
 }
+
+    /**
+     * Tunjukkan butiran lelongan untuk satu item.
+     *
+     * @param int $id
+     * @return \Illuminate\View\View
+     */
+    public function show($id)
+    {
+        // Kod ini tidak perlu diubah kerana ia berfungsi dengan baik
+        $listing = Listing::with(['bids.member', 'member'])->findOrFail($id);
+        $bids = $listing->bids;
+        $highestBid = $bids->sortByDesc('bid_price')->first();
+        $currentPrice = $highestBid ? $highestBid->bid_price : $listing->starting_price;
+        return view('admin.bidding-status.show', compact('listing', 'highestBid', 'bids', 'currentPrice'));
+    }
 }

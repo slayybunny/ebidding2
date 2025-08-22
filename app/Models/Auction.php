@@ -15,13 +15,15 @@ class Auction extends Model
         'end_time',
     ];
 
+    // Relationship ke table bids (foreign key = listing_id)
     public function bids()
     {
-        return $this->hasMany(Bid::class);
+        return $this->hasMany(Bid::class, 'listing_id');
     }
-    public function highestBid()
-{
-    return $this->hasOne(\App\Models\Bid::class)->orderByDesc('bid_amount');
-}
 
+    // Highest bid ikut bid_price
+    public function highestBid()
+    {
+        return $this->hasOne(Bid::class, 'listing_id')->orderByDesc('bid_price');
+    }
 }

@@ -638,6 +638,9 @@
     <i class="fas fa-book-open menu-icon"></i> Rules & Manual
 </a>-->
 
+<!--<a class="nav-link {{ request()->routeIs('admin.reports.profit.form') ? 'active' : '' }}" href="{{ route('admin.reports.profit.form') }}">
+    <i class="fas fa-chart-line menu-icon"></i> Reporting
+</a>-->
 
 
 <a class="nav-link {{ request()->routeIs('admin.profile') ? 'active' : '' }}" href="{{ route('admin.profile') }}">

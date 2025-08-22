@@ -4,6 +4,16 @@
 
 @section('content')
     <style>
+        /* Definisi warna kustom */
+        :root {
+            --custom-brown-dark: #A57C4F;
+            --custom-brown: #B78D5B;
+            --custom-brown-light: #CFB79A;
+            --custom-brown-subtle: rgba(183, 141, 91, 0.15);
+            --gradient-start: #D8A561;
+            --gradient-end: #A57C4F;
+        }
+
         /* Existing CSS */
         .badge-active {
             background-color: #16a34a;
@@ -31,8 +41,8 @@
 
         .btn-view {
             background-color: transparent;
-            color: #2563eb;
-            border: 1px solid #2563eb;
+            color: var(--custom-brown);
+            border: 1px solid var(--custom-brown);
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 13px;
@@ -40,7 +50,7 @@
         }
 
         .btn-view:hover {
-            background-color: #2563eb;
+            background-color: var(--custom-brown);
             color: #fff;
         }
 
@@ -88,6 +98,34 @@
             color: #1f2937;
         }
 
+        /* Button Print dan Download */
+        .btn-custom-brown {
+            color: white;
+            background-image: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            border: none;
+            box-shadow: 0 4px 15px rgba(183, 141, 91, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom-brown:hover {
+            box-shadow: 0 6px 20px rgba(183, 141, 91, 0.5);
+            transform: translateY(-2px);
+            background-position: right center;
+        }
+
+        .btn-outline-custom-brown {
+            color: var(--custom-brown-dark);
+            border-color: var(--custom-brown-dark);
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-custom-brown:hover {
+            background-color: var(--custom-brown);
+            color: white;
+            border-color: var(--custom-brown);
+        }
+
         .tab-button {
             margin-right: 10px;
             font-size: 14px;
@@ -95,14 +133,27 @@
         }
 
         .tab-button.active {
-            background-color: #b8860b;
             color: white;
+            font-weight: bold;
+            border: none;
+            background-image: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            box-shadow: 0 4px 15px rgba(183, 141, 91, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
 
         .tab-wrapper {
+            display: flex; /* Mengubah tab-wrapper menjadi flex container */
+            justify-content: space-between; /* Menempatkan elemen di ujung-ujung */
+            align-items: center; /* Menyusun elemen di tengah secara vertikal */
             border-bottom: 2px solid #e5e7eb;
             padding-bottom: 5px;
             margin-bottom: 20px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
         }
 
         .col-bil {
@@ -155,12 +206,25 @@
 
     <div class="container mt-4">
         <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom-0">
+                <h5 class="mb-0 fw-semibold text-dark">E-Bidding User List</h5>
+            </div>
             <div class="card-body">
-                <h5 class="mb-4">E-Bidding User List</h5>
-
                 <div class="tab-wrapper">
-                    <button id="btnUser" class="btn tab-button active">User</button>
-                    <button id="btnAdmin" class="btn tab-button">Admin</button>
+                    <div class="tab-buttons">
+                        <button id="btnUser" class="btn tab-button active">User</button>
+                        <button id="btnAdmin" class="btn tab-button">Admin</button>
+                    </div>
+                    
+                    {{-- Tombol Print dan Download dipindahkan ke sini --}}
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-custom-brown" onclick="printReport()">
+                            <i class="fas fa-print me-1"></i> Print
+                        </button>
+                        <button class="btn btn-sm btn-custom-brown" onclick="downloadReport()">
+                            <i class="fas fa-download me-1"></i> Download
+                        </button>
+                    </div>
                 </div>
 
                 <div class="table-responsive">
@@ -282,6 +346,7 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         // Global variable to store details of the item to delete
         let itemToDelete = {
@@ -297,11 +362,14 @@
         const deleteModal = document.getElementById('deleteModal');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
+        let currentTableId = 'userTable';
+
         btnUser.addEventListener('click', () => {
             btnUser.classList.add('active');
             btnAdmin.classList.remove('active');
             userTable.classList.remove('d-none');
             adminTable.classList.add('d-none');
+            currentTableId = 'userTable';
         });
 
         btnAdmin.addEventListener('click', () => {
@@ -309,6 +377,7 @@
             btnUser.classList.remove('active');
             adminTable.classList.remove('d-none');
             userTable.classList.add('d-none');
+            currentTableId = 'adminTable';
         });
 
         // Show confirmation modal
@@ -349,7 +418,7 @@
                         document.getElementById(rowId)?.remove();
                         hideDeleteModal();
                         alert(data.success);
-                        renumberRows(itemToDelete.type === 'user' ? 'userTable' : 'adminTable');
+                        renumberRows(currentTableId);
                     } else {
                         alert(data.error || 'Failed to delete item.');
                     }
@@ -372,6 +441,82 @@
                     firstCell.textContent = index + 1;
                 }
             });
+        }
+        
+        // Fungsi untuk mencetak laporan (print)
+        function printReport() {
+            const currentTable = document.getElementById(currentTableId).cloneNode(true);
+            const tableTitle = currentTableId === 'userTable' ? 'User List' : 'Admin List';
+
+            // Menghapus kolom "Action" dari tabel sebelum dicetak
+            const headerRow = currentTable.querySelector('thead tr');
+            const headers = headerRow.querySelectorAll('th');
+            let actionColumnIndex = -1;
+            headers.forEach((header, index) => {
+                if (header.textContent.trim() === 'Action') {
+                    actionColumnIndex = index;
+                }
+            });
+            if (actionColumnIndex !== -1) {
+                headers[actionColumnIndex].remove();
+                currentTable.querySelectorAll('tbody tr').forEach(row => {
+                    row.querySelectorAll('td')[actionColumnIndex].remove();
+                });
+            }
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>${tableTitle} Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        h1 { text-align: center; color: #333; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                    </style>
+                </head>
+                <body>
+                    <h1>${tableTitle} Report</h1>
+                    ${currentTable.outerHTML}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Fungsi untuk mengunduh laporan (download)
+        function downloadReport() {
+            const currentTable = document.getElementById(currentTableId);
+            const tableName = currentTableId === 'userTable' ? 'User_List' : 'Admin_List';
+            const filename = tableName + '_' + new Date().toLocaleDateString('en-CA') + '.xlsx';
+
+            // Clone the table to manipulate without affecting the original display
+            const clonedTable = currentTable.cloneNode(true);
+
+            // Remove 'Action' column from the cloned table
+            const headerRow = clonedTable.querySelector('thead tr');
+            let actionColumnIndex = -1;
+            headerRow.querySelectorAll('th').forEach((th, index) => {
+                if (th.textContent.trim() === 'Action') {
+                    actionColumnIndex = index;
+                }
+            });
+            if (actionColumnIndex !== -1) {
+                clonedTable.querySelectorAll('th')[actionColumnIndex].remove();
+                clonedTable.querySelectorAll('tr').forEach(row => {
+                    if (row.children[actionColumnIndex]) {
+                        row.children[actionColumnIndex].remove();
+                    }
+                });
+            }
+
+            const wb = XLSX.utils.table_to_book(clonedTable, {
+                sheet: "Sheet1"
+            });
+            XLSX.writeFile(wb, filename);
         }
     </script>
 @endsection
