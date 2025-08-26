@@ -28,7 +28,7 @@
                 <p class="text-center text-sm text-gray-500">{{ $listing->type }}</p>
                 <p class="text-center font-bold mt-2">{{ $listing->currency }} {{ number_format($listing->starting_price, 2) }}</p>
 
-               
+
               {{-- ===== Pilihan 1: Skip payment (default demo) ===== --}}
 <button
     class="block mt-4 w-full text-center bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
