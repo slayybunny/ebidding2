@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('listings', function (Blueprint $table) {
-            $table->enum('status', ['PENDING', 'ONGOING', 'COMPLETED'])
+            // Tukar column status jadi ENUM dengan value yang sesuai
+            $table->enum('status', ['PENDING', 'ONGOING', 'ENDED'])
                   ->default('PENDING')
                   ->change();
         });
@@ -24,7 +25,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('listings', function (Blueprint $table) {
-            //
+            // Kalau nak rollback, contoh jadikan balik string
+            $table->string('status')->change();
         });
     }
 };

@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('bids', function (Blueprint $table) {
-            $table->string('status')->default('pending');
+            if (!Schema::hasColumn('bids', 'status')) {
+                $table->string('status')->default('pending');
+            }
         });
     }
 
@@ -22,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('bids', function (Blueprint $table) {
-            $table->dropColumn('status');
+            if (Schema::hasColumn('bids', 'status')) {
+                $table->dropColumn('status');
+            }
         });
     }
 };
