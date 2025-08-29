@@ -81,7 +81,7 @@ class ListingController extends Controller
             'end_time'       => $endAt->format('H:i:s'),
 
             // Status auto
-            'status'         => now()->between($startAt, $endAt) ? 'PENDING' : 'ENDED',
+            'status'         => now()->between($startAt, $endAt) ? 'active' : 'unactive',
         ]);
 
         return redirect()->route('my-gold-items')->with('success', 'Listing created successfully!');
