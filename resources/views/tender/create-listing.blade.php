@@ -177,7 +177,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="pt-4 border-t border-gray-200">
+                 <div class="pt-4 border-t border-gray-200">
                     <button type="submit"
                         class="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 flex items-center justify-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
