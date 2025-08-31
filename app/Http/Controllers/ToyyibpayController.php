@@ -13,6 +13,14 @@ use App\Models\Member;
 
 class ToyyibpayController extends Controller
 {
+    protected $baseUrl;
+
+    public function __construct()
+    {
+        // guna env utk toggle sandbox/live
+        $this->baseUrl = rtrim(config('toyyibpay.base_url', 'https://toyyibpay.com'), '/');
+    }
+
     /**
      * Create a ToyyibPay payment bill for bidding
      */
@@ -20,21 +28,17 @@ class ToyyibpayController extends Controller
     {
         $listing = Listing::findOrFail($listingId);
 
-        // Ambil bid dari user login
         $userBid = Bid::where('listing_id', $listingId)
             ->where('member_id', Auth::id())
             ->firstOrFail();
 
-        // Maklumat member
         $member = Member::findOrFail(Auth::id());
 
-        // Nama bill
         $billName = Str::limit('Payment for ' . $listing->item, 30, '');
 
-        // Call ToyyibPay API
-        $response = Http::asForm()->post('https://toyyibpay.com/index.php/api/createBill', [
+        $response = Http::asForm()->post($this->baseUrl . '/index.php/api/createBill', [
             'userSecretKey'     => config('toyyibpay.key'),
-            'categoryCode'      => config('toyyibpay.category'), // Bid category
+            'categoryCode'      => config('toyyibpay.category'),
             'billName'          => $billName,
             'billDescription'   => 'Bid payment for listing',
             'billPriceSetting'  => 1,
@@ -59,34 +63,33 @@ class ToyyibpayController extends Controller
             $billCode = $result[0]['BillCode'];
             session(['toyyibpay_billcode' => $billCode]);
 
-            return redirect()->away("https://toyyibpay.com/$billCode");
+            return redirect()->away("{$this->baseUrl}/{$billCode}");
         }
 
         return back()->with('error', 'Failed to create payment bill. Response: ' . json_encode($result));
     }
 
     /**
-     * Create a fixed RM10 payment (different category)
+     * Create a fixed RM10 payment
      */
-    public function createFixedPayment()
+    public function fixedFeePayment()
     {
-        // Maklumat member login
-        $member = Member::findOrFail(Auth::id());
+        $member = Auth::user();
+        $amount = 10 * 100;
 
-        $billName = 'Fixed Payment RM10';
+        $billName = 'Viewing Fee - RM10';
 
-        // Call ToyyibPay API
-        $response = Http::asForm()->post('https://toyyibpay.com/index.php/api/createBill', [
+        $response = Http::asForm()->post($this->baseUrl . '/index.php/api/createBill', [
             'userSecretKey'     => config('toyyibpay.key'),
-            'categoryCode'      => config('toyyibpay.fixed_category'), // RM10 fixed category
+            'categoryCode'      => config('toyyibpay.fixed_category', config('toyyibpay.category')),
             'billName'          => $billName,
-            'billDescription'   => 'Fixed RM10 payment',
+            'billDescription'   => 'Fee to view bids',
             'billPriceSetting'  => 1,
             'billPayorInfo'     => 1,
-            'billAmount'        => 10 * 100, // RM10
-            'billReturnUrl'     => route('payment.redirect.fixed'),
+            'billAmount'        => $amount,
+            'billReturnUrl'     => route('payment.fixed.callback'),
             'billCallbackUrl'   => route('payment.callback'),
-            'billExternalReferenceNo' => 'FIXED-' . time(),
+            'billExternalReferenceNo' => 'fixed-fee-' . $member->id,
             'billTo'            => $member->name,
             'billEmail'         => $member->email,
             'billPhone'         => $member->phone,
@@ -97,16 +100,16 @@ class ToyyibpayController extends Controller
         ]);
 
         $result = $response->json();
-        Log::info('ToyyibPay Fixed RM10 Response', $result);
+        Log::info('ToyyibPay Fixed Fee Response', $result);
 
         if (!empty($result[0]['BillCode'])) {
             $billCode = $result[0]['BillCode'];
-            session(['toyyibpay_billcode_fixed' => $billCode]);
+            session(['toyyibpay_fee_billcode' => $billCode]);
 
-            return redirect()->away("https://toyyibpay.com/$billCode");
+            return redirect()->away("{$this->baseUrl}/{$billCode}");
         }
 
-        return back()->with('error', 'Failed to create fixed RM10 payment. Response: ' . json_encode($result));
+        return back()->with('error', 'Failed to create fixed fee payment. Response: ' . json_encode($result));
     }
 
     /**
@@ -138,7 +141,7 @@ class ToyyibpayController extends Controller
     }
 
     /**
-     * Redirect selepas bayar atau cancel untuk bid payment
+     * Redirect selepas bayar bid payment
      */
     public function redirectAfterPayment(Request $request, $bidId)
     {
@@ -149,7 +152,7 @@ class ToyyibpayController extends Controller
         $listingId = $bid ? $bid->listing_id : null;
 
         if ($statusId == 1 && $bid) {
-            $receiptUrl = "https://toyyibpay.com/" . $billCode;
+            $receiptUrl = "{$this->baseUrl}/{$billCode}";
 
             Listing::where('id', $listingId)->update([
                 'is_paid' => true,
@@ -165,12 +168,12 @@ class ToyyibpayController extends Controller
     }
 
     /**
-     * Redirect selepas bayar atau cancel untuk fixed RM10 payment
+     * Redirect selepas bayar fixed RM10
      */
-    public function redirectAfterFixedPayment(Request $request)
+    public function fixedFeeCallback(Request $request)
     {
         $statusId = $request->get('status_id');
-        $billCode = $request->get('billcode') ?? session('toyyibpay_billcode_fixed');
+        $billCode = $request->get('billcode') ?? session('toyyibpay_fee_billcode');
 
         if ($statusId == 1) {
             return redirect()->route('payment.status')
@@ -191,49 +194,4 @@ class ToyyibpayController extends Controller
 
         return response()->file(storage_path("app/receipts/{$listing->id}.pdf"));
     }
-
-    public function fixedFeePayment()
-{
-    $member = Auth::user(); // ambil data login
-
-    // RM10 dalam sen
-    $amount = 10 * 100;
-
-    // Optional: nama bill
-    $billName = 'Viewing Fee - RM10';
-
-    // Call ToyyibPay API untuk create bill
-    $response = Http::asForm()->post('https://toyyibpay.com/index.php/api/createBill', [
-        'userSecretKey'     => config('toyyibpay.key'),
-        'categoryCode'      => config('toyyibpay.category'), // gunakan category asal
-        'billName'          => $billName,
-        'billDescription'   => 'Fee to view bids',
-        'billPriceSetting'  => 1,
-        'billPayorInfo'     => 1,
-        'billAmount'        => $amount,
-        'billReturnUrl'     => route('payment.fixed.callback'), // buat route callback
-        'billCallbackUrl'   => route('payment.callback'),
-        'billExternalReferenceNo' => 'fixed-fee-' . $member->id,
-        'billTo'            => $member->name,
-        'billEmail'         => $member->email,
-        'billPhone'         => $member->phone,
-        'billExpiryDate'    => now()->addDays(3)->format('Y-m-d'),
-        'billExpiryDays'    => 3,
-        'billPaymentChannel'=> 2,
-        'billChargeToCustomer' => 1
-    ]);
-
-    $result = $response->json();
-    Log::info('ToyyibPay Fixed Fee Response', $result);
-
-    if (!empty($result[0]['BillCode'])) {
-        $billCode = $result[0]['BillCode'];
-        session(['toyyibpay_fee_billcode' => $billCode]);
-
-        return redirect()->away("https://toyyibpay.com/$billCode");
-    }
-
-    return back()->with('error', 'Failed to create fixed fee payment. Response: ' . json_encode($result));
-}
-
 }
